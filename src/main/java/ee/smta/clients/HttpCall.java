@@ -55,8 +55,8 @@ public class HttpCall {
                     }
                 }
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        } catch (IOException ignore) {
+            throw new InternalServerErrorException();
         }
     }
 

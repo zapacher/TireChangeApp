@@ -2,6 +2,7 @@ package ee.smta.clients;
 
 import ee.smta.api.RequestType;
 import ee.smta.api.error.BadRequestException;
+import ee.smta.api.error.InternalServerErrorException;
 import ee.smta.api.london.LondonRequest;
 import ee.smta.api.london.LondonResponse;
 import ee.smta.api.london.TireChangeBookingResponse;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
 import java.io.StringReader;
+import java.util.UUID;
 
 import static ee.smta.api.RequestType.AVAILABLE_TIME;
 import static ee.smta.api.RequestType.BOOKING;
@@ -36,8 +39,10 @@ public class LondonClient {
     }
 
     public LondonResponse bookTime(LondonRequest londonRequest) throws JAXBException {
-        //!!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
-        // reRequest of available booking time before execution call.
+        /*
+         !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
+          reRequest of available booking time before execution call.
+         */
         checkAvailability(londonRequest);
 
         JAXBContext jaxbContext = JAXBContext.newInstance(TireChangeBookingResponse.class);
@@ -70,11 +75,17 @@ public class LondonClient {
                 .build());
         boolean isAvailable = false;
         for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
-            if(availableTime.equals(londonRequest.getUuid())) {
+            if(availableTime.getUuid().equals(londonRequest.getUuid())) {
                 isAvailable = true;
+                break;
             }
         }
         if(!isAvailable) {
+                try {
+                    UUID.fromString(londonRequest.getUuid());
+                } catch (IllegalArgumentException ignore) {
+                    throw new InternalServerErrorException();
+                }
             throw new BadRequestException(422, "This time is already booked");
         }
     }

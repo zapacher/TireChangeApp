@@ -1,4 +1,5 @@
 import ee.smta.api.error.BadRequestException;
+import ee.smta.api.error.InternalServerErrorException;
 import ee.smta.api.london.LondonRequest;
 import ee.smta.api.london.LondonResponse;
 import ee.smta.api.manchester.ManchesterRequest;
@@ -84,6 +85,13 @@ public class ClientCallTests {
                                     .uuid(londonBookingTestUuid)
                                     .bookingInfo(info+1)
                                     .build());
+                }),
+                () -> assertThrows(InternalServerErrorException.class, ()-> {
+                    londonClient.bookTime(
+                            LondonRequest.builder()
+                                    .uuid("null")
+                                    .bookingInfo("null")
+                                    .build());
                 }));
     }
 
@@ -139,7 +147,7 @@ public class ClientCallTests {
                 () -> assertThrows(BadRequestException.class, ()-> {
                     manchesterClient.bookTime(ManchesterRequest.builder()
                             .id(dummyId)
-                            .contactInformation("")
+                            .contactInformation(null)
                             .build());
                 }));
     }
