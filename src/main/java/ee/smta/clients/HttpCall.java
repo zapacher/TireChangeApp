@@ -2,7 +2,6 @@ package ee.smta.clients;
 
 import ee.smta.api.error.BadRequestException;
 import ee.smta.api.error.InternalServerErrorException;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -13,7 +12,6 @@ import java.io.IOException;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
-@Slf4j
 public class HttpCall {
 
     @Autowired

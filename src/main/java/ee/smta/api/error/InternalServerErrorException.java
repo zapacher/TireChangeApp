@@ -6,8 +6,6 @@ import lombok.Getter;
 
 @Getter
 public class InternalServerErrorException extends RuntimeException {
-   private static final long serialVersionUID = -5226600966257972085L;
-
    private final ErrorResponse error;
 
    public InternalServerErrorException() {
