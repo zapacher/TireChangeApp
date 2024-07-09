@@ -70,27 +70,28 @@ public class ClientCallTests {
         String info = "TEST_INFO";
         dummyCallLondon(londonBookingTestUuid, info);
         assertAll(
-                () -> assertThrows(BadRequestException.class, ()-> {
-                    londonClient.bookTime(
-                            LondonRequest.builder()
-                                    .uuid(londonBookingTestUuid)
-                                    .bookingInfo(info)
-                                    .build());
-                }),
-                () -> assertThrows(BadRequestException.class, ()-> {
-                    londonClient.bookTime(
-                            LondonRequest.builder()
-                                    .uuid(londonBookingTestUuid)
-                                    .bookingInfo(info+1)
-                                    .build());
-                }),
-                () -> assertThrows(InternalServerErrorException.class, ()-> {
-                    londonClient.bookTime(
-                            LondonRequest.builder()
-                                    .uuid("null")
-                                    .bookingInfo("null")
-                                    .build());
-                }));
+                () -> assertThrows(BadRequestException.class,
+                        () -> londonClient.bookTime(
+                                LondonRequest.builder()
+                                        .uuid(londonBookingTestUuid)
+                                        .bookingInfo(info)
+                                        .build())
+                ),
+                () -> assertThrows(BadRequestException.class,
+                        () -> londonClient.bookTime(
+                                LondonRequest.builder()
+                                        .uuid(londonBookingTestUuid)
+                                        .bookingInfo(info+1)
+                                        .build())
+                ),
+                () -> assertThrows(InternalServerErrorException.class,
+                        () -> londonClient.bookTime(
+                                LondonRequest.builder()
+                                        .uuid("null")
+                                        .bookingInfo("null")
+                                        .build())
+                )
+        );
     }
 
     @Test
@@ -136,18 +137,18 @@ public class ClientCallTests {
         String dummyId = "20";
         dummyCallManchester(dummyId);
         assertAll(
-                () -> assertThrows(BadRequestException.class, ()-> {
-                    manchesterClient.bookTime(ManchesterRequest.builder()
-                            .id(dummyId)
-                            .contactInformation("TESTInfo")
-                            .build());
-                }),
-                () -> assertThrows(BadRequestException.class, ()-> {
-                    manchesterClient.bookTime(ManchesterRequest.builder()
-                            .id(dummyId)
-                            .contactInformation(null)
-                            .build());
-                }));
+                () -> assertThrows(BadRequestException.class,
+                        () -> manchesterClient.bookTime(ManchesterRequest.builder()
+                                .id(dummyId)
+                                .contactInformation("TESTInfo")
+                                .build())
+                ),
+                () -> assertThrows(BadRequestException.class,
+                        () -> manchesterClient.bookTime(ManchesterRequest.builder()
+                                .id(dummyId)
+                                .contactInformation(null)
+                                .build())
+                ));
     }
 
     private void dummyCallLondon(String id, String info) {
