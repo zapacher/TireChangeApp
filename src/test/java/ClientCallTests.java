@@ -14,8 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
 
-import javax.xml.bind.JAXBException;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {LondonClient.class, ManchesterClient.class})
@@ -31,7 +29,7 @@ public class ClientCallTests {
     ManchesterResponse manchesterResponse;
 
     @Test
-    void test_LondonRequestAvailableTime() throws JAXBException {
+    void test_LondonRequestAvailableTime() {
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
                         .from("2006-01-02")
@@ -46,7 +44,7 @@ public class ClientCallTests {
     }
 
     @Test
-    void test_LondonRequestBooking() throws JAXBException {
+    void test_LondonRequestBooking() {
         test_LondonRequestAvailableTime();
 
         String londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
@@ -65,7 +63,7 @@ public class ClientCallTests {
     }
 
     @Test
-    void test_londonBookingError() throws JAXBException {
+    void test_londonBookingError() {
         test_LondonRequestAvailableTime();
 
         String londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
@@ -152,7 +150,7 @@ public class ClientCallTests {
                 }));
     }
 
-    private void dummyCallLondon(String id, String info) throws JAXBException {
+    private void dummyCallLondon(String id, String info) {
         try {
             londonClient.bookTime(
                     LondonRequest.builder()

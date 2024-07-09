@@ -2,9 +2,9 @@ package ee.smta.clients;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import ee.smta.api.RequestType;
 import ee.smta.api.manchester.ManchesterRequest;
 import ee.smta.api.manchester.ManchesterResponse;
-import ee.smta.api.RequestType;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Type;

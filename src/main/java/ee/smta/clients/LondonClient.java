@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import java.io.IOException;
 import java.io.StringReader;
 import java.util.UUID;
 
@@ -26,32 +25,20 @@ public class LondonClient {
 
     private final String baseUrl = "http://localhost:9003/api/v1/tire-change-times/";
 
-    public LondonResponse getAvailableTime(LondonRequest londonRequest) throws JAXBException {
-
-        JAXBContext jaxbContext = JAXBContext.newInstance(TireChangeTimesResponse.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        TireChangeTimesResponse response = (TireChangeTimesResponse) unmarshaller.unmarshal(
-                new StringReader(urlExecutor(AVAILABLE_TIME, londonRequest)));
-
+    public LondonResponse getAvailableTime(LondonRequest londonRequest) {
         return LondonResponse.builder()
-                .tireChangeTimesResponse(response)
+                .tireChangeTimesResponse(fromXml(TireChangeTimesResponse.class, AVAILABLE_TIME, londonRequest))
                 .build();
     }
 
-    public LondonResponse bookTime(LondonRequest londonRequest) throws JAXBException {
+    public LondonResponse bookTime(LondonRequest londonRequest) {
         /*
          !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
           reRequest of available booking time before execution call.
          */
         checkAvailability(londonRequest);
-
-        JAXBContext jaxbContext = JAXBContext.newInstance(TireChangeBookingResponse.class);
-        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        TireChangeBookingResponse response = (TireChangeBookingResponse) unmarshaller.unmarshal(
-                new StringReader(urlExecutor(BOOKING, londonRequest)));
-
         return LondonResponse.builder()
-                .tireChangeBookingResponse(response)
+                .tireChangeBookingResponse(fromXml(TireChangeBookingResponse.class, BOOKING, londonRequest))
                 .build();
     }
 
@@ -68,7 +55,7 @@ public class LondonClient {
         return null;
     }
 
-    private void checkAvailability(LondonRequest londonRequest) throws JAXBException {
+    private void checkAvailability(LondonRequest londonRequest) {
         LondonResponse londonResponse = getAvailableTime(LondonRequest.builder()
                 .from("2006-01-02")
                 .until("2030-01-02")
@@ -81,12 +68,23 @@ public class LondonClient {
             }
         }
         if(!isAvailable) {
-                try {
-                    UUID.fromString(londonRequest.getUuid());
-                } catch (IllegalArgumentException ignore) {
-                    throw new InternalServerErrorException();
-                }
+            try {
+                UUID.fromString(londonRequest.getUuid());
+            } catch (IllegalArgumentException ignore) {
+                throw new InternalServerErrorException();
+            }
             throw new BadRequestException(422, "This time is already booked");
+        }
+    }
+
+
+    public <T> T fromXml(Class<T> responseClass, RequestType requestType, LondonRequest londonRequest) {
+        try {
+            JAXBContext jaxbContext = JAXBContext.newInstance(responseClass);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            return (T) unmarshaller.unmarshal(new StringReader(urlExecutor(requestType, londonRequest)));
+        } catch (JAXBException ex) {
+            throw new InternalServerErrorException(500, ex.getMessage());
         }
     }
 
