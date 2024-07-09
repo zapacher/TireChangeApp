@@ -9,6 +9,7 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.Objects;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
@@ -40,19 +41,16 @@ public class HttpCall {
 
     private String execute(Request request) {
         try (Response response = client.newCall(request).execute()) {
-            if(response.isSuccessful()){
-                return response.body().string();
+            if(response.isSuccessful()) {
+                if(Objects.requireNonNull(response.body()).string().isEmpty()) {
+                    return response.body().string();
+                }
+                throw new InternalServerErrorException();
             } else {
                 switch(response.code()) {
-                    case 400 -> {
-                        throw new BadRequestException(400, "Bad Request");
-                    }
-                    case 422 -> {
-                        throw new BadRequestException(422, "This time is already booked");
-                    }
-                    default -> {
-                        throw new InternalServerErrorException();
-                    }
+                    case 400 -> throw new BadRequestException(400, "Bad Request");
+                    case 422 -> throw new BadRequestException(422, "This time is already booked");
+                    default -> throw new InternalServerErrorException();
                 }
             }
         } catch (IOException ignore) {

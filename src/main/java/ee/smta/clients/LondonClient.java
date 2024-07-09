@@ -13,6 +13,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.StringReader;
+import java.util.Objects;
 import java.util.UUID;
 
 import static ee.smta.api.RequestType.AVAILABLE_TIME;
@@ -21,9 +22,9 @@ import static ee.smta.api.RequestType.BOOKING;
 public class LondonClient {
 
     @Autowired
-    private HttpCall httpCall;
+    HttpCall httpCall;
 
-    private final String baseUrl = "http://localhost:9003/api/v1/tire-change-times/";
+    private static final String BASE_URL = "http://localhost:9003/api/v1/tire-change-times/";
 
     public LondonResponse getAvailableTime(LondonRequest londonRequest) {
         return LondonResponse.builder()
@@ -45,10 +46,10 @@ public class LondonClient {
     private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
         switch (requestType) {
             case AVAILABLE_TIME -> {
-                return httpCall.get(baseUrl + "available?from=" + londonRequest.getFrom() + "&until=" + londonRequest.getUntil());
+                return httpCall.get(BASE_URL + "available?from=" + londonRequest.getFrom() + "&until=" + londonRequest.getUntil());
             }
             case BOOKING -> {
-                return httpCall.put(baseUrl+londonRequest.getUuid()+"/booking",
+                return httpCall.put(BASE_URL +londonRequest.getUuid()+"/booking",
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
         }
@@ -78,11 +79,16 @@ public class LondonClient {
     }
 
 
+    @SuppressWarnings("unchecked")
     public <T> T fromXml(Class<T> responseClass, RequestType requestType, LondonRequest londonRequest) {
+        String urlResponse = urlExecutor(requestType, londonRequest);
+        if(Objects.requireNonNull(urlResponse).isEmpty()) {
+            throw new InternalServerErrorException(500, "blank london response");
+        }
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(responseClass);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (T) unmarshaller.unmarshal(new StringReader(urlExecutor(requestType, londonRequest)));
+            return (T) unmarshaller.unmarshal(new StringReader(urlResponse));
         } catch (JAXBException ex) {
             throw new InternalServerErrorException(500, ex.getMessage());
         }

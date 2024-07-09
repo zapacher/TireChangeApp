@@ -15,9 +15,9 @@ import static ee.smta.api.RequestType.BOOKING;
 
 public class ManchesterClient {
     @Autowired
-    private HttpCall httpCall;
+    HttpCall httpCall;
 
-    private final String baseUrl = "http://localhost:9004/api/v2/tire-change-times";
+    private static final String BASE_URL = "http://localhost:9004/api/v2/tire-change-times";
 
     public ManchesterResponse getAvailableTime(ManchesterRequest manchesterRequest) {
         return toJsonList(urlExecutor(AVAILABLE_TIME, manchesterRequest));
@@ -30,10 +30,10 @@ public class ManchesterClient {
     private String urlExecutor(RequestType requestType, ManchesterRequest manchesterRequest) {
         switch (requestType) {
             case AVAILABLE_TIME -> {
-                return httpCall.get(baseUrl+"?from="+manchesterRequest.getFrom());
+                return httpCall.get(BASE_URL +"?from="+manchesterRequest.getFrom());
             }
             case BOOKING -> {
-                return httpCall.post(baseUrl+"/"+manchesterRequest.getId()+"/booking",
+                return httpCall.post(BASE_URL +"/"+manchesterRequest.getId()+"/booking",
                         "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation()+"\"}");
             }
         }
