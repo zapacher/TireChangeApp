@@ -15,6 +15,7 @@ import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
 @Slf4j
 public class HttpCall {
+
     @Autowired
     OkHttpClient client;
 

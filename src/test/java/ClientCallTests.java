@@ -1,8 +1,8 @@
+import ee.smta.api.error.BadRequestException;
 import ee.smta.api.london.LondonRequest;
 import ee.smta.api.london.LondonResponse;
 import ee.smta.api.manchester.ManchesterRequest;
 import ee.smta.api.manchester.ManchesterResponse;
-import ee.smta.api.error.BadRequestException;
 import ee.smta.clients.HttpCall;
 import ee.smta.clients.LondonClient;
 import ee.smta.clients.ManchesterClient;
@@ -19,14 +19,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {LondonClient.class, ManchesterClient.class})
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
-public class TireChangeApplicationTest {
+public class ClientCallTests {
 
     @Autowired
     LondonClient londonClient;
     @Autowired
     ManchesterClient manchesterClient;
 
-    String londonBookingTestUuid;
+    LondonResponse londonResponse;
     ManchesterResponse manchesterResponse;
 
     @Test
@@ -41,12 +41,14 @@ public class TireChangeApplicationTest {
                 () -> assertNotNull(londonResponse.getTireChangeTimesResponse(), "london available full response"),
                 () -> assertNotNull(londonResponse.getTireChangeTimesResponse().getAvailableTime(),"london available full response list")
         );
-        londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(1).getUuid();
+        this.londonResponse = londonResponse;
     }
 
     @Test
     void test_LondonRequestBooking() throws JAXBException {
         test_LondonRequestAvailableTime();
+
+        String londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
 
         LondonResponse londonResponse = londonClient.bookTime(
                 LondonRequest.builder()
@@ -56,9 +58,33 @@ public class TireChangeApplicationTest {
 
         assertAll(
                 () -> assertNotNull(londonResponse.getTireChangeBookingResponse(),"london booking response"),
-                () -> assertNotEquals(londonResponse.getTireChangeBookingResponse().getTime(), "london booking response time"),
-                () -> assertNotEquals(londonResponse.getTireChangeBookingResponse().getUuid(), "london booking response uuid")
+                () -> assertNotNull(londonResponse.getTireChangeBookingResponse().getTime(), "london booking response time"),
+                () -> assertNotNull(londonResponse.getTireChangeBookingResponse().getUuid(), "london booking response uuid")
         );
+    }
+
+    @Test
+    void test_londonBookingError() throws JAXBException {
+        test_LondonRequestAvailableTime();
+
+        String londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
+        String info = "TEST_INFO";
+        dummyCallLondon(londonBookingTestUuid, info);
+        assertAll(
+                () -> assertThrows(BadRequestException.class, ()-> {
+                    londonClient.bookTime(
+                            LondonRequest.builder()
+                                    .uuid(londonBookingTestUuid)
+                                    .bookingInfo(info)
+                                    .build());
+                }),
+                () -> assertThrows(BadRequestException.class, ()-> {
+                    londonClient.bookTime(
+                            LondonRequest.builder()
+                                    .uuid(londonBookingTestUuid)
+                                    .bookingInfo(info+1)
+                                    .build());
+                }));
     }
 
     @Test
@@ -102,7 +128,7 @@ public class TireChangeApplicationTest {
     @Test
     void test_ManchesterBookingError() {
         String dummyId = "20";
-        dummyCall(dummyId);
+        dummyCallManchester(dummyId);
         assertAll(
                 () -> assertThrows(BadRequestException.class, ()-> {
                     manchesterClient.bookTime(ManchesterRequest.builder()
@@ -118,7 +144,17 @@ public class TireChangeApplicationTest {
                 }));
     }
 
-    private void dummyCall(String id) {
+    private void dummyCallLondon(String id, String info) throws JAXBException {
+        try {
+            londonClient.bookTime(
+                    LondonRequest.builder()
+                            .uuid(id)
+                            .bookingInfo(info)
+                            .build());
+        } catch (BadRequestException ignore) {};
+    }
+
+    private void dummyCallManchester(String id) {
         try {
             manchesterClient.bookTime(ManchesterRequest.builder()
                     .id(id)

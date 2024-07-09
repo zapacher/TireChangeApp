@@ -1,6 +1,7 @@
 package ee.smta.clients;
 
-import ee.smta.api.*;
+import ee.smta.api.RequestType;
+import ee.smta.api.error.BadRequestException;
 import ee.smta.api.london.LondonRequest;
 import ee.smta.api.london.LondonResponse;
 import ee.smta.api.london.TireChangeBookingResponse;
@@ -35,6 +36,10 @@ public class LondonClient {
     }
 
     public LondonResponse bookTime(LondonRequest londonRequest) throws JAXBException {
+        //!!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
+        // reRequest of available booking time before execution call.
+        checkAvailability(londonRequest);
+
         JAXBContext jaxbContext = JAXBContext.newInstance(TireChangeBookingResponse.class);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         TireChangeBookingResponse response = (TireChangeBookingResponse) unmarshaller.unmarshal(
@@ -56,6 +61,22 @@ public class LondonClient {
             }
         }
         return null;
+    }
+
+    private void checkAvailability(LondonRequest londonRequest) throws JAXBException {
+        LondonResponse londonResponse = getAvailableTime(LondonRequest.builder()
+                .from("2006-01-02")
+                .until("2030-01-02")
+                .build());
+        boolean isAvailable = false;
+        for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
+            if(availableTime.equals(londonRequest.getUuid())) {
+                isAvailable = true;
+            }
+        }
+        if(!isAvailable) {
+            throw new BadRequestException(422, "This time is already booked");
+        }
     }
 
     private String buildBookingBodyXML(String bookingInfo) {
