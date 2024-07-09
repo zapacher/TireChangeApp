@@ -158,7 +158,7 @@ public class ClientCallTests {
                             .uuid(id)
                             .bookingInfo(info)
                             .build());
-        } catch (BadRequestException ignore) {};
+        } catch (BadRequestException ignore) {}
     }
 
     private void dummyCallManchester(String id) {
@@ -167,6 +167,7 @@ public class ClientCallTests {
                     .id(id)
                     .contactInformation("TESTInfo")
                     .build());
-        } catch (BadRequestException ignore) {};
+        } catch (BadRequestException ignore) {
+        }
     }
 }
