@@ -1,6 +1,10 @@
 package ee.smta.clients;
 
 import ee.smta.api.*;
+import ee.smta.api.london.LondonRequest;
+import ee.smta.api.london.LondonResponse;
+import ee.smta.api.london.TireChangeBookingResponse;
+import ee.smta.api.london.TireChangeTimesResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.xml.bind.JAXBContext;
@@ -14,9 +18,9 @@ import static ee.smta.api.RequestType.BOOKING;
 public class LondonClient {
 
     @Autowired
-    HttpCall httpCall;
+    private HttpCall httpCall;
 
-    private String baseUrl = "http://localhost:9003/api/v1/tire-change-times/";
+    private final String baseUrl = "http://localhost:9003/api/v1/tire-change-times/";
 
     public LondonResponse getAvailableTime(LondonRequest londonRequest) throws JAXBException {
 
@@ -24,6 +28,7 @@ public class LondonClient {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         TireChangeTimesResponse response = (TireChangeTimesResponse) unmarshaller.unmarshal(
                 new StringReader(urlExecutor(AVAILABLE_TIME, londonRequest)));
+
         return LondonResponse.builder()
                 .tireChangeTimesResponse(response)
                 .build();
@@ -34,6 +39,7 @@ public class LondonClient {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         TireChangeBookingResponse response = (TireChangeBookingResponse) unmarshaller.unmarshal(
                 new StringReader(urlExecutor(BOOKING, londonRequest)));
+
         return LondonResponse.builder()
                 .tireChangeBookingResponse(response)
                 .build();
@@ -42,16 +48,17 @@ public class LondonClient {
     private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
         switch (requestType) {
             case AVAILABLE_TIME -> {
-                return httpCall.get(baseUrl + "available?from=" + londonRequest.getFrom() + "&until=" + londonRequest.getUntil(), null);
+                return httpCall.get(baseUrl + "available?from=" + londonRequest.getFrom() + "&until=" + londonRequest.getUntil());
             }
             case BOOKING -> {
-                return httpCall.put(baseUrl+londonRequest.getUuid()+"/booking", buildBookingBody(londonRequest.getBookingInfo()));
+                return httpCall.put(baseUrl+londonRequest.getUuid()+"/booking",
+                        buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
         }
         return null;
     }
 
-    private String buildBookingBody(String bookingInfo) {
+    private String buildBookingBodyXML(String bookingInfo) {
         return "<london.tireChangeBookingRequest>\n" +
                 "\t<contactInformation>"+bookingInfo+"</contactInformation>\n" +
                 "</london.tireChangeBookingRequest>'";

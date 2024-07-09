@@ -1,12 +1,7 @@
-package ee.smta.api;
+package ee.smta.api.london;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
-import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
 
 @Data
 @Builder

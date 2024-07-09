@@ -1,46 +1,67 @@
 package ee.smta.clients;
 
+import ee.smta.api.error.BadRequestException;
+import ee.smta.api.error.InternalServerErrorException;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
+@Slf4j
 public class HttpCall {
     @Autowired
     OkHttpClient client;
 
+    protected String post(String requestUrl, String requestBody) {
+        return execute(new Request.Builder()
+                .url(requestUrl)
+                .post(createRequestBody(requestBody))
+                .build());
+    }
 
-    public String get(String requestUrl, String requestBody) {
-        try {
-            return client.newCall(new Request.Builder()
-                            .url(requestUrl)
-                            .get()
-                            .build())
-                    .execute().body().string();
+    protected String get(String requestUrl) {
+        return execute(new Request.Builder()
+                .url(requestUrl)
+                .get()
+                .build());
+    }
+
+    protected String put(String requestUrl, String requestBody) {
+        return execute(new Request.Builder()
+                .url(requestUrl)
+                .put(createRequestBody(requestBody))
+                .build());
+    }
+
+    private String execute(Request request) {
+        try (Response response = client.newCall(request).execute()) {
+            if(response.isSuccessful()){
+                return response.body().string();
+            } else {
+                switch(response.code()) {
+                    case 400 -> {
+                        throw new BadRequestException(400, "Bad Request");
+                    }
+                    case 422 -> {
+                        throw new BadRequestException(422, "This time is already booked");
+                    }
+                    default -> {
+                        throw new InternalServerErrorException();
+                    }
+                }
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public String put(String requestUrl, String requestBody) {
-        try {
-            return client.newCall(new Request.Builder()
-                            .url(requestUrl)
-                            .method("PUT", createRequestBodyBody(requestBody))
-                            .build())
-                    .execute().body().string();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private RequestBody createRequestBodyBody(String requestBody) {
+    private RequestBody createRequestBody(String requestBody) {
         return okhttp3.RequestBody.create(requestBody,okhttp3.MediaType.parse(APPLICATION_JSON_VALUE));
     }
-
-
 }
