@@ -1,4 +1,4 @@
-package ee.smta.api.manchester;
+package ee.smit.api.manchester;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Builder;

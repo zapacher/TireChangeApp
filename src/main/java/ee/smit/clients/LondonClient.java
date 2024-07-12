@@ -1,13 +1,13 @@
-package ee.smta.clients;
+package ee.smit.clients;
 
-import ee.smta.api.RequestType;
-import ee.smta.api.london.LondonRequest;
-import ee.smta.api.london.LondonResponse;
-import ee.smta.api.london.TireChangeBookingResponse;
-import ee.smta.api.london.TireChangeTimesResponse;
-import ee.smta.common.HttpCall;
-import ee.smta.common.error.BadRequestException;
-import ee.smta.common.error.InternalServerErrorException;
+import ee.smit.api.RequestType;
+import ee.smit.api.london.LondonRequest;
+import ee.smit.api.london.LondonResponse;
+import ee.smit.api.london.TireChangeBookingResponse;
+import ee.smit.api.london.TireChangeTimesResponse;
+import ee.smit.commons.HttpCall;
+import ee.smit.commons.errors.BadRequestException;
+import ee.smit.commons.errors.InternalServerErrorException;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -19,8 +19,8 @@ import java.io.StringReader;
 import java.util.Objects;
 import java.util.UUID;
 
-import static ee.smta.api.RequestType.AVAILABLE_TIME;
-import static ee.smta.api.RequestType.BOOKING;
+import static ee.smit.api.RequestType.AVAILABLE_TIME;
+import static ee.smit.api.RequestType.BOOKING;
 
 public class LondonClient {
 

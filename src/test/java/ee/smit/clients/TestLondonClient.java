@@ -1,10 +1,10 @@
-package ee.smta.clients;
+package ee.smit.clients;
 
-import ee.smta.api.london.LondonRequest;
-import ee.smta.api.london.LondonResponse;
-import ee.smta.common.HttpCall;
-import ee.smta.common.error.BadRequestException;
-import ee.smta.common.error.InternalServerErrorException;
+import ee.smit.api.london.LondonRequest;
+import ee.smit.api.london.LondonResponse;
+import ee.smit.commons.HttpCall;
+import ee.smit.commons.errors.BadRequestException;
+import ee.smit.commons.errors.InternalServerErrorException;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

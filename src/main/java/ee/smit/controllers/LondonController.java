@@ -1,4 +1,4 @@
-package ee.smta.controllers;
+package ee.smit.controllers;
 
 public class LondonController {
 }

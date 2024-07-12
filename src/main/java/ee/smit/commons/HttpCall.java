@@ -1,6 +1,6 @@
-package ee.smta.common;
+package ee.smit.commons;
 
-import ee.smta.common.error.InternalServerErrorException;
+import ee.smit.commons.errors.InternalServerErrorException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;

@@ -1,9 +1,9 @@
-package ee.smta.clients;
+package ee.smit.clients;
 
-import ee.smta.api.manchester.ManchesterRequest;
-import ee.smta.api.manchester.ManchesterResponse;
-import ee.smta.common.HttpCall;
-import ee.smta.common.error.BadRequestException;
+import ee.smit.api.manchester.ManchesterRequest;
+import ee.smit.api.manchester.ManchesterResponse;
+import ee.smit.commons.HttpCall;
+import ee.smit.commons.errors.BadRequestException;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

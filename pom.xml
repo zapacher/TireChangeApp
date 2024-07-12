@@ -9,9 +9,9 @@
         <version>2.7.4</version>
         <relativePath/>
     </parent>
-    <groupId>ee.smta</groupId>
+    <groupId>ee.smit</groupId>
     <artifactId>tire_change</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>V1.0</version>
     <name>SMTA #tire_change</name>
 
     <properties>

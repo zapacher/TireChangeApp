@@ -1,13 +1,13 @@
-package ee.smta.clients;
+package ee.smit.clients;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import ee.smta.api.RequestType;
-import ee.smta.api.manchester.ManchesterRequest;
-import ee.smta.api.manchester.ManchesterResponse;
-import ee.smta.common.HttpCall;
-import ee.smta.common.error.BadRequestException;
-import ee.smta.common.error.InternalServerErrorException;
+import ee.smit.api.RequestType;
+import ee.smit.api.manchester.ManchesterRequest;
+import ee.smit.api.manchester.ManchesterResponse;
+import ee.smit.commons.HttpCall;
+import ee.smit.commons.errors.BadRequestException;
+import ee.smit.commons.errors.InternalServerErrorException;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -16,8 +16,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Objects;
 
-import static ee.smta.api.RequestType.AVAILABLE_TIME;
-import static ee.smta.api.RequestType.BOOKING;
+import static ee.smit.api.RequestType.AVAILABLE_TIME;
+import static ee.smit.api.RequestType.BOOKING;
 
 public class ManchesterClient {
     @Autowired

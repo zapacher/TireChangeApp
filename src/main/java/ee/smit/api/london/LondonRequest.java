@@ -1,4 +1,4 @@
-package ee.smta.api.london;
+package ee.smit.api.london;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;

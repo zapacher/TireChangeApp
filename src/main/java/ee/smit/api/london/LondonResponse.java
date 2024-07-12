@@ -1,4 +1,4 @@
-package ee.smta.api.london;
+package ee.smit.api.london;
 
 import lombok.Builder;
 import lombok.Data;

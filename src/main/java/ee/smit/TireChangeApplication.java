@@ -1,4 +1,4 @@
-package ee.smta;
+package ee.smit;
 
 
 import org.springframework.boot.SpringApplication;

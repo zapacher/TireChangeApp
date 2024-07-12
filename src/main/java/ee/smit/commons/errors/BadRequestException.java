@@ -1,4 +1,4 @@
-package ee.smta.common.error;
+package ee.smit.commons.errors;
 
 
 import lombok.Getter;
