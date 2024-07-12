@@ -1,10 +1,10 @@
-import ee.smta.api.error.BadRequestException;
-import ee.smta.api.error.InternalServerErrorException;
+import ee.smta.common.error.BadRequestException;
+import ee.smta.common.error.InternalServerErrorException;
 import ee.smta.api.london.LondonRequest;
 import ee.smta.api.london.LondonResponse;
 import ee.smta.api.manchester.ManchesterRequest;
 import ee.smta.api.manchester.ManchesterResponse;
-import ee.smta.clients.HttpCall;
+import ee.smta.common.HttpCall;
 import ee.smta.clients.LondonClient;
 import ee.smta.clients.ManchesterClient;
 import okhttp3.OkHttpClient;

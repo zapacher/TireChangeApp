@@ -1,4 +1,4 @@
-package ee.smta.api.error;
+package ee.smta.common.error;
 
 
 import lombok.Getter;

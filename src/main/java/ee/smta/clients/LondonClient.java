@@ -1,17 +1,20 @@
 package ee.smta.clients;
 
 import ee.smta.api.RequestType;
-import ee.smta.api.error.BadRequestException;
-import ee.smta.api.error.InternalServerErrorException;
 import ee.smta.api.london.LondonRequest;
 import ee.smta.api.london.LondonResponse;
 import ee.smta.api.london.TireChangeBookingResponse;
 import ee.smta.api.london.TireChangeTimesResponse;
+import ee.smta.common.HttpCall;
+import ee.smta.common.error.BadRequestException;
+import ee.smta.common.error.InternalServerErrorException;
+import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.Objects;
 import java.util.UUID;
@@ -44,16 +47,29 @@ public class LondonClient {
     }
 
     private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
-        switch (requestType) {
-            case AVAILABLE_TIME -> {
-                return httpCall.get(BASE_URL + "available?from=" + londonRequest.getFrom() + "&until=" + londonRequest.getUntil());
-            }
-            case BOOKING -> {
-                return httpCall.put(BASE_URL +londonRequest.getUuid()+"/booking",
+        Response response = null;
+        try {
+            switch (requestType) {
+                case AVAILABLE_TIME -> response =  httpCall.get(BASE_URL + "available?from=" + londonRequest.getFrom()
+                        + "&until=" + londonRequest.getUntil());
+                case BOOKING -> response = httpCall.put(BASE_URL +londonRequest.getUuid()+"/booking",
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
+            if(response.isSuccessful()) {
+                if(Objects.requireNonNull(response.body()).string().isEmpty()) {
+                    return response.body().string();
+                }
+                throw new InternalServerErrorException();
+            } else {
+                switch(response.code()) {
+                    case 400 -> throw new BadRequestException(400, "Bad Request");
+                    case 422 -> throw new BadRequestException(422, "This time is already booked");
+                    default -> throw new InternalServerErrorException();
+                }
+            }
+        } catch (IOException ignore) {
+            throw new InternalServerErrorException();
         }
-        return null;
     }
 
     private void checkAvailability(LondonRequest londonRequest) {
