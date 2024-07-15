@@ -10,7 +10,9 @@ import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import javax.websocket.ClientEndpoint;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
@@ -22,6 +24,7 @@ import java.util.UUID;
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
 
+@Service
 public class LondonClient {
 
     @Autowired
@@ -56,10 +59,7 @@ public class LondonClient {
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
             if(response.isSuccessful()) {
-                if(Objects.requireNonNull(response.body()).string().isEmpty()) {
-                    return response.body().string();
-                }
-                throw new InternalServerErrorException();
+                return response.body().string();
             } else {
                 switch(response.code()) {
                     case 400 -> throw new BadRequestException(400, "Bad Request");
@@ -94,8 +94,6 @@ public class LondonClient {
         }
     }
 
-
-    @SuppressWarnings("unchecked")
     public <T> T fromXml(Class<T> responseClass, RequestType requestType, LondonRequest londonRequest) {
         String urlResponse = urlExecutor(requestType, londonRequest);
         if(Objects.requireNonNull(urlResponse).isEmpty()) {

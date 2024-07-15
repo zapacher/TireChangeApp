@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Objects;
 
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
@@ -42,10 +41,7 @@ public class ManchesterClient {
                         "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
             }
             if (response.isSuccessful()) {
-                if (Objects.requireNonNull(response.body()).string().isEmpty()) {
-                    return response.body().string();
-                }
-                throw new InternalServerErrorException();
+                return response.body().string();
             } else {
                 switch (response.code()) {
                     case 400 -> throw new BadRequestException(400, "Bad Request");
