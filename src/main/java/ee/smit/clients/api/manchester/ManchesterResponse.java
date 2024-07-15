@@ -18,7 +18,7 @@ public class ManchesterResponse {
 
     private String time;
 
-    private boolean booked;
+    private boolean available;
 
     List<AvailableTime> availableTimes;
 

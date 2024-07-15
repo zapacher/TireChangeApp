@@ -1,4 +1,4 @@
-package ee.smit.controllers.dto;
+package ee.smit.controllers.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

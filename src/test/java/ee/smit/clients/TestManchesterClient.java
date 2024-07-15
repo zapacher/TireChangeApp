@@ -56,7 +56,7 @@ public class TestManchesterClient {
         assertAll(
                 () -> assertEquals(finalManchesterBookingTestId, manchesterResponse.getId(), "manchester booking id request response match"),
                 () -> assertNotNull(manchesterResponse.getTime(), "manchester booked time isn't empty"),
-                () -> assertTrue( manchesterResponse.isBooked(), "manchester time is booked")
+                () -> assertFalse(manchesterResponse.isAvailable(), "manchester time is booked")
         );
     }
 

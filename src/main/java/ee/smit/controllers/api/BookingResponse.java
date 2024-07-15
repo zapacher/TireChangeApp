@@ -1,4 +1,4 @@
-package ee.smit.controllers.dto;
+package ee.smit.controllers.api;
 
 import ee.smit.commons.errors.ErrorResponse;
 import lombok.AllArgsConstructor;

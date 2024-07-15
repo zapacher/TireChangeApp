@@ -1,8 +1,7 @@
-package ee.smit.controllers.dto;
+package ee.smit.controllers.api;
 
 import ee.smit.api.Location;
-import ee.smit.commons.errors.ErrorResponse;
-import ee.smit.controllers.dto.groups.Request;
+import ee.smit.controllers.api.groups.Request;
 import lombok.*;
 
 import javax.validation.constraints.NotNull;
@@ -15,11 +14,13 @@ public class BookingRequest {
     @NotNull(groups = {Request.class})
     String id;
 
+    @NotNull(groups = {Request.class})
     String bookingTime;
 
     @NotNull(groups = {Request.class})
     String info;
 
+    @NotNull(groups = {Request.class})
     Location location;
 
 }

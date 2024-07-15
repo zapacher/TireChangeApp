@@ -6,9 +6,9 @@ import ee.smit.clients.api.london.LondonRequest;
 import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.errors.InternalServerErrorException;
-import ee.smit.controllers.dto.AvailableTimeResponse;
-import ee.smit.controllers.dto.BookingRequest;
-import ee.smit.controllers.dto.BookingResponse;
+import ee.smit.controllers.api.AvailableTimeResponse;
+import ee.smit.controllers.api.BookingRequest;
+import ee.smit.controllers.api.BookingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
