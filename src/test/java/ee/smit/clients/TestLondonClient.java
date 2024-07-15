@@ -1,7 +1,7 @@
 package ee.smit.clients;
 
-import ee.smit.api.london.LondonRequest;
-import ee.smit.api.london.LondonResponse;
+import ee.smit.clients.api.london.LondonRequest;
+import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
@@ -99,4 +99,5 @@ public class TestLondonClient {
                             .build());
         } catch (BadRequestException ignore) {}
     }
+
 }

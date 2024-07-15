@@ -7,8 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AvailableTimeDto {
+public class AvailableTimeResponse {
     String id;
     String availableTime;
-
 }

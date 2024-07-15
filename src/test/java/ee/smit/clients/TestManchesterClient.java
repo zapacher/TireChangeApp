@@ -1,7 +1,7 @@
 package ee.smit.clients;
 
-import ee.smit.api.manchester.ManchesterRequest;
-import ee.smit.api.manchester.ManchesterResponse;
+import ee.smit.clients.api.manchester.ManchesterRequest;
+import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import okhttp3.OkHttpClient;
@@ -30,8 +30,7 @@ public class TestManchesterClient {
                 .build());
 
         assertAll(
-                () -> assertFalse(manchesterResponse.getAvailableTimes().isEmpty(), "manchester availability list isEmpty"),
-                () -> assertEquals(1500, manchesterResponse.getAvailableTimes().size(),"manchester availability list size")
+                () -> assertFalse(manchesterResponse.getAvailableTimes().isEmpty(), "manchester response contains list")
         );
 
         this.manchesterResponse = manchesterResponse;
@@ -42,7 +41,7 @@ public class TestManchesterClient {
         test_ManchesterRequestAvailableTime();
         String manchesterBookingTestId = "";
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
-            if(availableTime.getAvailable().equals("true")) {
+            if(availableTime.isAvailable()) {
                 manchesterBookingTestId = availableTime.getId();
                 break;
             }
@@ -57,7 +56,7 @@ public class TestManchesterClient {
         assertAll(
                 () -> assertEquals(finalManchesterBookingTestId, manchesterResponse.getId(), "manchester booking id request response match"),
                 () -> assertNotNull(manchesterResponse.getTime(), "manchester booked time isn't empty"),
-                () -> assertEquals("false", manchesterResponse.getAvailable(), "manchester time is booked")
+                () -> assertTrue( manchesterResponse.isBooked(), "manchester time is booked")
         );
     }
 

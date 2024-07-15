@@ -1,10 +1,10 @@
 package ee.smit.clients;
 
 import ee.smit.api.RequestType;
-import ee.smit.api.london.LondonRequest;
-import ee.smit.api.london.LondonResponse;
-import ee.smit.api.london.TireChangeBookingResponse;
-import ee.smit.api.london.TireChangeTimesResponse;
+import ee.smit.clients.api.london.LondonRequest;
+import ee.smit.clients.api.london.LondonResponse;
+import ee.smit.clients.api.london.TireChangeBookingResponse;
+import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
@@ -12,7 +12,6 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.websocket.ClientEndpoint;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;

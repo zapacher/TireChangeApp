@@ -1,6 +1,7 @@
-package ee.smit.api.manchester;
+package ee.smit.clients.api.manchester;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ee.smit.commons.errors.ErrorResponse;
 import lombok.Builder;
 import lombok.Data;
 
@@ -10,11 +11,14 @@ import java.util.List;
 @Data
 @Builder
 public class ManchesterResponse {
+
+    private ErrorResponse errorResponse;
+
     private String id;
 
     private String time;
 
-    private String available;
+    private boolean booked;
 
     List<AvailableTime> availableTimes;
 
@@ -25,6 +29,6 @@ public class ManchesterResponse {
 
         private String time;
 
-        private String available;
+        private boolean available;
     }
 }

@@ -3,8 +3,8 @@ package ee.smit.clients;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import ee.smit.api.RequestType;
-import ee.smit.api.manchester.ManchesterRequest;
-import ee.smit.api.manchester.ManchesterResponse;
+import ee.smit.clients.api.manchester.ManchesterRequest;
+import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
@@ -56,7 +57,15 @@ public class ManchesterClient {
 
     private ManchesterResponse toJsonList(String jsonString) {
         Type availableTimeListType = new TypeToken<List<ManchesterResponse.AvailableTime>>(){}.getType();
-        List<ManchesterResponse.AvailableTime> availableTimes = gson.fromJson(jsonString, availableTimeListType);
+        List<ManchesterResponse.AvailableTime> timeList = gson.fromJson(jsonString, availableTimeListType);
+
+        List<ManchesterResponse.AvailableTime> availableTimes = new ArrayList<>();
+
+        for(ManchesterResponse.AvailableTime availableTime : timeList) {
+            if(availableTime.isAvailable()) {
+                availableTimes.add(availableTime);
+            }
+        }
 
         return ManchesterResponse.builder()
                 .availableTimes(availableTimes)

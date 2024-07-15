@@ -1,11 +1,12 @@
 package ee.smit.controllers;
 
+import ee.smit.services.ManchesterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = ManchesterController.class)
+@SpringBootTest(classes = ManchesterService.class)
 public class TestManchesterController {
 
     @Autowired
-    ManchesterController manchesterController;
+    ManchesterService manchesterService;
 }

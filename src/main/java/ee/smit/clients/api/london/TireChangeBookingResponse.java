@@ -1,4 +1,4 @@
-package ee.smit.api.london;
+package ee.smit.clients.api.london;
 
 import lombok.Data;
 
