@@ -1,11 +1,11 @@
 application:
-  name: ee.smta
+  name: ee.smit
   type: app
 
 environment:
   MANCHESTER_ENDPOINT: "localhost:9004"
-  MANCHESTER_TIMELISTPATH: "/tire-change-times"
-  MANCHESTER_BOOKINGPATH: "/tire-change-times/{id}/booking"
+  MANCHESTER_TIRECHANGEPATH: ""
+  MANCHESTER_INFO: ""
   LONDON_ENDPOINT: "localhost:9003"
-  LONDON_TIMELISTPATH: "/tire-change-times/available"
-  LONDON_BOOKINGPATH: "/tire-change-times/{uuid}/booking"
+  LONDON_TIRECHANGEPATH: ""
+  LONDON_INFO: ""

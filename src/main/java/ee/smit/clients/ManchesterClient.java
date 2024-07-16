@@ -8,8 +8,10 @@ import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
+import ee.smit.configurations.ManchesterProperties;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -19,11 +21,16 @@ import java.util.List;
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
 
+@Service
 public class ManchesterClient {
+
     @Autowired
     HttpCall httpCall;
 
-    private static final String BASE_URL = "http://localhost:9004/api/v2/tire-change-times";
+    @Autowired
+    ManchesterProperties manchesterProperties;
+
+//    private static final String BASE_URL = "http://localhost:9004/api/v2/tire-change-times";
 
     public ManchesterResponse getAvailableTime(ManchesterRequest manchesterRequest) {
         return toJsonList(urlExecutor(AVAILABLE_TIME, manchesterRequest));
@@ -34,11 +41,12 @@ public class ManchesterClient {
     }
 
     private String urlExecutor(RequestType requestType, ManchesterRequest manchesterRequest) {
+        final String URL = manchesterProperties.getEndpoint() + manchesterProperties.getTirechangepath();
         Response response = null;
         try {
             switch (requestType) {
-                case AVAILABLE_TIME -> response = httpCall.get(BASE_URL + "?from=" + manchesterRequest.getFrom());
-                case BOOKING -> response = httpCall.post(BASE_URL + "/" + manchesterRequest.getId() + "/booking",
+                case AVAILABLE_TIME -> response = httpCall.get(URL + "?from=" + manchesterRequest.getFrom());
+                case BOOKING -> response = httpCall.post(URL + "/" + manchesterRequest.getId() + "/booking",
                         "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
             }
             if (response.isSuccessful()) {

@@ -8,6 +8,7 @@ import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
+import ee.smit.configurations.LondonProperties;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,10 @@ public class LondonClient {
     @Autowired
     HttpCall httpCall;
 
-    private static final String BASE_URL = "http://localhost:9003/api/v1/tire-change-times/";
+    @Autowired
+    LondonProperties londonProperties;
+
+//    private static final String BASE_URL = "http://localhost:9003/api/v1/tire-change-times/";
 
     public LondonResponse getAvailableTime(LondonRequest londonRequest) {
         return LondonResponse.builder()
@@ -49,12 +53,13 @@ public class LondonClient {
     }
 
     private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
+        final String URL = londonProperties.getEndpoint() + londonProperties.getTirechangepath();
         Response response = null;
         try {
             switch (requestType) {
-                case AVAILABLE_TIME -> response =  httpCall.get(BASE_URL + "available?from=" + londonRequest.getFrom()
+                case AVAILABLE_TIME -> response =  httpCall.get(URL + "available?from=" + londonRequest.getFrom()
                         + "&until=" + londonRequest.getUntil());
-                case BOOKING -> response = httpCall.put(BASE_URL +londonRequest.getUuid()+"/booking",
+                case BOOKING -> response = httpCall.put(URL +londonRequest.getUuid()+"/booking",
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
             if(response.isSuccessful()) {
