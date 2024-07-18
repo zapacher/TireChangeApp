@@ -9,6 +9,7 @@ import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.ManchesterProperties;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.List;
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
 
+@Slf4j
 @Service
 public class ManchesterClient {
 
@@ -30,14 +32,22 @@ public class ManchesterClient {
     @Autowired
     ManchesterProperties manchesterProperties;
 
-//    private static final String BASE_URL = "http://localhost:9004/api/v2/tire-change-times";
+    public ManchesterResponse getAvailableTime(ManchesterRequest request) {
+        log.info("{} getAvailableTime Request: -> {}",this.getClass().getName() ,request);
 
-    public ManchesterResponse getAvailableTime(ManchesterRequest manchesterRequest) {
-        return toJsonList(urlExecutor(AVAILABLE_TIME, manchesterRequest));
+        ManchesterResponse response = toJsonList(urlExecutor(AVAILABLE_TIME, request));
+
+        log.info("{} getAvailableTime Response: -> {}",this.getClass().getName() ,response);
+        return response;
     }
 
-    public ManchesterResponse bookTime(ManchesterRequest manchesterRequest) {
-        return toJson(urlExecutor(BOOKING, manchesterRequest));
+    public ManchesterResponse bookTime(ManchesterRequest request) {
+        log.info("{} bookTime Request: -> {}",this.getClass().getName() ,request);
+
+        ManchesterResponse response = toJson(urlExecutor(BOOKING, request));
+
+        log.info("{} bookTime Response: -> {}",this.getClass().getName() ,response);
+        return response;
     }
 
     private String urlExecutor(RequestType requestType, ManchesterRequest manchesterRequest) {

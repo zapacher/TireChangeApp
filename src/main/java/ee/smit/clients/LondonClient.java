@@ -9,6 +9,7 @@ import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.LondonProperties;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import java.util.UUID;
 
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
-
+@Slf4j
 @Service
 public class LondonClient {
 
@@ -33,23 +34,30 @@ public class LondonClient {
     @Autowired
     LondonProperties londonProperties;
 
-//    private static final String BASE_URL = "http://localhost:9003/api/v1/tire-change-times/";
+    public LondonResponse getAvailableTime(LondonRequest request) {
+        log.info("{} getAvailableTime Request: ->{}", this.getClass().getName(), request);
 
-    public LondonResponse getAvailableTime(LondonRequest londonRequest) {
-        return LondonResponse.builder()
-                .tireChangeTimesResponse(fromXml(TireChangeTimesResponse.class, AVAILABLE_TIME, londonRequest))
+        LondonResponse response = LondonResponse.builder()
+                .tireChangeTimesResponse(fromXml(TireChangeTimesResponse.class, AVAILABLE_TIME, request))
                 .build();
+
+        log.info("{} getAvailableTime Response: -> {}", this.getClass().getName(), response);
+        return response;
     }
 
-    public LondonResponse bookTime(LondonRequest londonRequest) {
+    public LondonResponse bookTime(LondonRequest request) {
+        log.info("{} bookTime Request: ->{}", this.getClass().getName(), request);
         /*
          !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
           reRequest of available booking time before execution call.
          */
-        checkAvailability(londonRequest);
-        return LondonResponse.builder()
-                .tireChangeBookingResponse(fromXml(TireChangeBookingResponse.class, BOOKING, londonRequest))
+        checkAvailability(request);
+        LondonResponse response = LondonResponse.builder()
+                .tireChangeBookingResponse(fromXml(TireChangeBookingResponse.class, BOOKING, request))
                 .build();
+
+        log.info("{} bookTime Response: -> {}", this.getClass().getName(), response);
+        return response;
     }
 
     private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {

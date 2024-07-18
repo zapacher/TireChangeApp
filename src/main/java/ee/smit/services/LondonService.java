@@ -29,7 +29,7 @@ public class LondonService {
                 return (T) getAvailableTime();
             }
             case BOOKING -> {
-                return (T) booking((BookingRequest) request);
+                return (T) booking(request);
             }
             default -> throw new InternalServerErrorException();
         }

@@ -6,6 +6,7 @@ import ee.smit.controllers.api.BookingRequest;
 import ee.smit.controllers.api.BookingResponse;
 import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import java.util.List;
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
 
+@Slf4j
 @RestController("tire_change")
 @RequestMapping("/tire_change")
 public class TireChangeController {
@@ -27,23 +29,31 @@ public class TireChangeController {
 
     @PostMapping("/getAvailableTime")
     List<AvailableTimeResponse> getAvailableTime(@RequestBody Location location) {
-        List<AvailableTimeResponse> availableTimeDtoList = null;
+        List<AvailableTimeResponse> response = null;
+
+        log.info("{} getAvailableTime Request: -> {}", this.getClass().getName(), location);
 
         switch(location) {
-            case LONDON -> availableTimeDtoList = londonService.process(null, AVAILABLE_TIME);
-            case MANCHESTER -> availableTimeDtoList = manchesterService.process(null, AVAILABLE_TIME);
+            case LONDON -> response = londonService.process(null, AVAILABLE_TIME);
+            case MANCHESTER -> response = manchesterService.process(null, AVAILABLE_TIME);
         }
-        return availableTimeDtoList;
+
+        log.info("{} getAvailableTime Response: -> {}", this.getClass().getName(), response);
+        return response;
     }
 
     @PostMapping("/booking")
     BookingResponse booking(@RequestBody BookingRequest bookingRequest) {
-        BookingResponse bookingResult = null;
+        log.info("{} booking Request: -> {}", this.getClass().getName(), bookingRequest);
+
+        BookingResponse response = null;
 
         switch(bookingRequest.getLocation()) {
-            case LONDON -> bookingResult = londonService.process(bookingRequest, BOOKING);
-            case MANCHESTER -> bookingResult = manchesterService.process(bookingRequest, BOOKING);
+            case LONDON -> response = londonService.process(bookingRequest, BOOKING);
+            case MANCHESTER -> response = manchesterService.process(bookingRequest, BOOKING);
         }
-        return bookingResult;
+
+        log.info("{} getAvailableTime Response: -> {}", this.getClass().getName(), response);
+        return response;
     }
 }
