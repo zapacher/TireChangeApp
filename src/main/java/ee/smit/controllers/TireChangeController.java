@@ -53,7 +53,7 @@ public class TireChangeController {
             case MANCHESTER -> response = manchesterService.process(bookingRequest, BOOKING);
         }
 
-        log.info("{} getAvailableTime Response: -> {}", this.getClass().getName(), response);
+        log.info("{} booking Response: -> {}", this.getClass().getName(), response);
         return response;
     }
 }
