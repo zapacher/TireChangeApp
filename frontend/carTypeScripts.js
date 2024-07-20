@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-
     let locationVehicleMap = new Map();
 
     function getAvailableLocations() {
@@ -48,10 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         })
         .then(data => {
-            console.log(data)
-            // displayElement.textContent = `Response from POST: ${JSON.stringify(data)}`;
-            // generateCalendar(location);
-            // element.textContent = location + locationsInfo.get(location);
+            console.log('BOOKING -> ' + data)
         })
         .catch((error) => {
             console.error('Error with POST request:', error);
@@ -64,34 +60,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function processBookintAvailability(locations) {
         document.getElementById('container').innerHTML = '';
-        container.innerHTML = '';
-        for(const location of locations) {
-            document.getElementById('container').innerHTML += createLocationDiv(location);
-            getAvailableBooking(location);
-        }
 
-        // locations.forEach((location) => {
-        //     console.log(location)
-        //     document.getElementById('container').innerHTML += createLocationDiv(location);
-        //     console.log(document.getElementById('container').innerHTML)
-        //     getAvailableBooking(location);
-        //     // document.getElementById(location.toLowerCase()).style.display = 'block';
-        // });
+        locations.forEach((location) => {
+            document.getElementById('container').innerHTML += createLocationDiv(location);
+            document.getElementById(location.toLowerCase()).style.display = 'none';
+        });
+        
+        locations.forEach((location) => {
+            getAvailableBooking(location);
+            document.getElementById(location.toLowerCase()).style.display = 'block';
+        });
     }    
 
     function getLocationsForVehicle(vehicleType) {
         let locations = [];
+
         locationVehicleMap.forEach((vehicleTypes, location) => {
             if (vehicleTypes.includes(vehicleType)) {
                 locations.push(location);
             }
         });
-        console.log(locations)
+
         return locations;
     }
 
     function getAvailableBooking(location) {
         let element = document.getElementById(location.toLowerCase());
+
         fetch('http://localhost:8080/tire_change/getAvailableTime', {
             method: 'POST',
             headers: {
@@ -109,15 +104,10 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // displayElement.textContent = `Response from POST: ${JSON.stringify(data)}`;
-            // // generateCalendar(location);
-            element.textContent = data.address +'\n'+ data.location +'\n'+ data.vehicleTypes;
-            // element.innerText = data.address;
-            // element.innerHTML = 
-            //     `<p>Address: ${data.address}</p>
-            //      <p>Location: ${data.location}</p>
-            //      <p>Vehicle Types: ${data.vehicleTypes.join(', ')}</p>`;
-            console.log(data.location.toLowerCase())
+            element.innerHTML = 
+                `<p>Address: ${data.address}</p>
+                <p>Location: ${data.location}</p>
+                <p>Vehicle Types: ${data.vehicleTypes.join(', ')}</p>`;
         })
         .catch((error) => {
             console.error('Error with POST request:', error);
@@ -127,7 +117,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const carSelector = document.getElementById('carSelector');
     const truckSelector = document.getElementById('truckSelector');
 
-    
     carSelector.addEventListener('click', () => {
         const locations = getLocationsForVehicle('CAR');
         processBookintAvailability(locations);
