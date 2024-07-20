@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    function getAvailable(location) {
+
+    let locationVehicleMap = new Map();
+
+    function getAvailableLocations() {
         const element = document.getElementById(location);
-        fetch('http://localhost:8080/tire_change/getAvailableTime', {
-            method: 'POST',
+        fetch('http://localhost:8080/tire_change/availableLocations', {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
-            },
-            body: '"'+location.toUpperCase()+'"'
+            }
         })
         .then(response => {
-            console.log(response.data);
             if (!response.ok) {
                 response.json().then(errorData => {
                     element.textContent = errorData.message;
@@ -20,14 +21,14 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            // displayElement.textContent = `Response from POST: ${JSON.stringify(data)}`;
-            // generateCalendar(location);
-            element.textContent = data.address + '\n' + data.location +'\n'+ data.vehicleTypes;
+            locationVehicleMap = new Map(Object.entries(data));
         })
         .catch((error) => {
             console.error('Error with POST request:', error);
         });
     }
+
+    getAvailableLocations();
 
     function booking(id, location, info) {
         const element = document.getElementById(location);
@@ -57,81 +58,85 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
-    function fetchCars() {
-        getAvailable('london');
-        getAvailable('manchester');
+    function createLocationDiv(location) {
+        return '<div id="'+location.toLowerCase()+'" class="element" ></div>'
     }
-    
-    function fetchTrucks() {
-        getAvailable('manchester');
+
+    function processBookintAvailability(locations) {
+        document.getElementById('container').innerHTML = '';
+        container.innerHTML = '';
+        for(const location of locations) {
+            document.getElementById('container').innerHTML += createLocationDiv(location);
+            getAvailableBooking(location);
+        }
+
+        // locations.forEach((location) => {
+        //     console.log(location)
+        //     document.getElementById('container').innerHTML += createLocationDiv(location);
+        //     console.log(document.getElementById('container').innerHTML)
+        //     getAvailableBooking(location);
+        //     // document.getElementById(location.toLowerCase()).style.display = 'block';
+        // });
+    }    
+
+    function getLocationsForVehicle(vehicleType) {
+        let locations = [];
+        locationVehicleMap.forEach((vehicleTypes, location) => {
+            if (vehicleTypes.includes(vehicleType)) {
+                locations.push(location);
+            }
+        });
+        console.log(locations)
+        return locations;
+    }
+
+    function getAvailableBooking(location) {
+        let element = document.getElementById(location.toLowerCase());
+        fetch('http://localhost:8080/tire_change/getAvailableTime', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: '"'+location+'"'
+        })
+        .then(response => {
+            if (!response.ok) {
+                response.json().then(errorData => {
+                    element.textContent = errorData.message;
+                });
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            // displayElement.textContent = `Response from POST: ${JSON.stringify(data)}`;
+            // // generateCalendar(location);
+            element.textContent = data.address +'\n'+ data.location +'\n'+ data.vehicleTypes;
+            // element.innerText = data.address;
+            // element.innerHTML = 
+            //     `<p>Address: ${data.address}</p>
+            //      <p>Location: ${data.location}</p>
+            //      <p>Vehicle Types: ${data.vehicleTypes.join(', ')}</p>`;
+            console.log(data.location.toLowerCase())
+        })
+        .catch((error) => {
+            console.error('Error with POST request:', error);
+        });
     }
 
     const carSelector = document.getElementById('carSelector');
     const truckSelector = document.getElementById('truckSelector');
 
-    const container = document.getElementById('container');
-
-    const london = document.getElementById('london');
-    const manchester = document.getElementById('manchester');
     
     carSelector.addEventListener('click', () => {
-        fetchCars();
-        container.style.display = 'grid';
-        london.style.display = 'block';
-        manchester.style.display = 'block';
+        const locations = getLocationsForVehicle('CAR');
+        processBookintAvailability(locations);
     });
 
     truckSelector.addEventListener('click', () => {
-        // Specify which element to hide here
-        fetchTrucks();
-        container.style.display = 'grid';
-        london.style.display = 'none';
-        manchester.style.display = 'block';
-
-    });     
-
-    function generateCalendar(location) {
-        const now = new Date();
-        const month = now.getMonth(); // 0-11
-        const year = now.getFullYear();
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        
-        let calendarHtml = '<div class="calendar-header">' + 
-                           now.toLocaleString('default', { month: 'long' }) + ' ' + year + 
-                           '</div>';
-        calendarHtml += '<div class="calendar-days">' +
-                        '<div class="day">Su</div>' +
-                        '<div class="day">Mo</div>' +
-                        '<div class="day">Tu</div>' +
-                        '<div class="day">We</div>' +
-                        '<div class="day">Th</div>' +
-                        '<div class="day">Fr</div>' +
-                        '<div class="day">Sa</div>' +
-                        '</div>';
-        
-        calendarHtml += '<div class="calendar-grid">';
-        // Add empty cells for the days before the first day of the month
-        for (let i = 0; i < firstDay; i++) {
-            calendarHtml += '<div class="date"></div>';
-        }
-        
-        // Add the actual dates
-        for (let day = 1; day <= daysInMonth; day++) {
-            calendarHtml += '<div class="date">' + day + '</div>';
-        }
-        
-        // Add empty cells for the days after the last day of the month
-        const totalCells = firstDay + daysInMonth;
-        const remainingCells = 42 - totalCells;
-        for (let i = 0; i < remainingCells; i++) {
-            calendarHtml += '<div class="date"></div>';
-        }
-        
-        calendarHtml += '</div>';
-        document.getElementById(location).innerHTML = calendarHtml;
-    }
+        const locations = getLocationsForVehicle('TRUCK');
+        processBookintAvailability(locations);
+    }); 
 
 });
    

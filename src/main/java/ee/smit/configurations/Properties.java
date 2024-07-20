@@ -1,10 +1,12 @@
 package ee.smit.configurations;
 
 import ee.smit.commons.enums.Locations;
+import ee.smit.commons.enums.VehicleTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Component
@@ -14,16 +16,16 @@ public class Properties {
     @Autowired
     ManchesterProperties manchesterProperties;
 
-    public List<Locations> getAvailableServices() {
-        List<Locations> servicesList = new ArrayList<>();
+    public HashMap<Locations, List<VehicleTypes>> getAvailableLocations() {
+        HashMap<Locations, List<VehicleTypes>> response = new HashMap<>();
 
         if(londonProperties.isAvailable()) {
-            servicesList.add(londonProperties.getLocation());
+            response.put(londonProperties.getLocation(), londonProperties.getVehicleTypes());
         }
 
         if(manchesterProperties.isAvailable()) {
-            servicesList.add(manchesterProperties.getLocation());
+            response.put(manchesterProperties.getLocation(), manchesterProperties.getVehicleTypes());
         }
-        return servicesList;
+        return response;
     }
 }

@@ -4,7 +4,6 @@ import ee.smit.clients.LondonClient;
 import ee.smit.clients.api.london.LondonRequest;
 import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
-import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
@@ -29,9 +28,7 @@ public class LondonService {
     LondonClient londonClient;
 
     public <T> T process(T request, RequestType requestType) {
-        if(!londonProperties.isAvailable()) {
-            throw new BadRequestException(404, "service isn't available at the moment");
-        }
+        isLocationAvailable();
 
         switch(requestType) {
             case AVAILABLE_TIME -> {
@@ -74,5 +71,11 @@ public class LondonService {
                 .bookingTime(londonResponse.getTireChangeBookingResponse().getTime())
                 .isBooked(true)
                 .build();
+    }
+
+    private void isLocationAvailable() {
+        if(!londonProperties.isAvailable()) {
+            throw new BadRequestException(404, "service isn't available at the moment");
+        }
     }
 }

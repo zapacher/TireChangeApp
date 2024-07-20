@@ -1,6 +1,7 @@
 package ee.smit.controllers;
 
 import ee.smit.commons.enums.Locations;
+import ee.smit.commons.enums.VehicleTypes;
 import ee.smit.configurations.Properties;
 import ee.smit.controllers.api.AvailableTimeResponse;
 import ee.smit.controllers.api.Booking;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
@@ -32,9 +34,14 @@ public class TireChangeController {
     @Autowired
     Properties properties;
 
-    @GetMapping("/availableServices")
-    List<Locations> getServices() {
-        return properties.getAvailableServices();
+    @GetMapping("/availableLocations")
+    HashMap<Locations, List<VehicleTypes>> getLocations() {
+        log.info("getLocations Request");
+
+        HashMap<Locations, List<VehicleTypes>> response = properties.getAvailableLocations();
+
+        log.info("getLocations Response: -> {}", response);
+        return response;
     }
 
     @PostMapping("/getAvailableTime")

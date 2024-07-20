@@ -28,9 +28,8 @@ public class ManchesterService {
     ManchesterClient manchesterClient;
 
     public <T> T process(Booking request, RequestType requestType) {
-        if(!manchesterProperties.isAvailable()) {
-            throw new BadRequestException(404, "service isn't available at the moment");
-        }
+        isLocationAvailable();
+
         switch(requestType) {
             case AVAILABLE_TIME -> {
                 return (T) getAvailableTime();
@@ -72,5 +71,11 @@ public class ManchesterService {
                 .bookingTime(manchesterResponse.getTime())
                 .isBooked(!manchesterResponse.isAvailable())
                 .build();
+    }
+
+    private void isLocationAvailable() {
+        if(!manchesterProperties.isAvailable()) {
+            throw new BadRequestException(404, "service isn't available at the moment");
+        }
     }
 }

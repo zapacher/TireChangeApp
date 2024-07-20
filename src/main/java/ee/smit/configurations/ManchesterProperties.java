@@ -1,10 +1,11 @@
 package ee.smit.configurations;
 
 import ee.smit.commons.enums.Locations;
+import ee.smit.commons.enums.VehicleTypes;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import static ee.smit.commons.enums.Locations.MANCHESTER;
+import java.util.List;
 
 @Data
 @ConfigurationProperties(prefix = "environment.manchester")
@@ -12,7 +13,8 @@ public class ManchesterProperties {
     String address;
     Api api;
     boolean available;
-    Locations location = MANCHESTER;
+    Locations location;
+    List<VehicleTypes> vehicleTypes;
 
     @Data
     public static class Api {
