@@ -1,5 +1,6 @@
 package ee.smit.controllers.api;
 
+import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.VehicleTypes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AvailableTimeResponse {
+    String address;
+    Locations location;
     List<VehicleTypes> vehicleTypes = new ArrayList<>();
     List<AvailableTime> availableTimeList = new ArrayList<>();
 

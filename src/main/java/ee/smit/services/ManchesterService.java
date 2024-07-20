@@ -4,7 +4,9 @@ import ee.smit.clients.ManchesterClient;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.enums.RequestType;
+import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
+import ee.smit.configurations.ManchesterProperties;
 import ee.smit.controllers.api.AvailableTimeResponse;
 import ee.smit.controllers.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +23,14 @@ import static ee.smit.commons.enums.VehicleTypes.TRUCK;
 public class ManchesterService {
 
     @Autowired
+    ManchesterProperties manchesterProperties;
+    @Autowired
     ManchesterClient manchesterClient;
 
     public <T> T process(Booking request, RequestType requestType) {
+        if(!manchesterProperties.isAvailable()) {
+            throw new BadRequestException(404, "service isn't available at the moment");
+        }
         switch(requestType) {
             case AVAILABLE_TIME -> {
                 return (T) getAvailableTime();
@@ -44,10 +51,11 @@ public class ManchesterService {
 
         AvailableTimeResponse response = new AvailableTimeResponse();
         response.setVehicleTypes(List.of(CAR, TRUCK));
+
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
             response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(availableTime.getId(), availableTime.getTime()));
         }
-
+        response.setAddress(manchesterProperties.getAddress());
         return response;
     }
 

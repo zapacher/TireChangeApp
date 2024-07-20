@@ -51,7 +51,7 @@ public class ManchesterClient {
     }
 
     private String urlExecutor(RequestType requestType, ManchesterRequest manchesterRequest) {
-        final String URL = manchesterProperties.getEndpoint() + manchesterProperties.getTirechangepath();
+        final String URL = manchesterProperties.getApi().getEndpoint() + manchesterProperties.getApi().getTirechangepath();
         Response response = null;
         try {
             switch (requestType) {

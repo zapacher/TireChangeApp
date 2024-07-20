@@ -60,7 +60,7 @@ public class LondonClient {
     }
 
     private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
-        final String URL = londonProperties.getEndpoint() + londonProperties.getTirechangepath();
+        String URL = londonProperties.getApi().getEndpoint() + londonProperties.getApi().getTirechangepath();
         Response response = null;
         try {
             switch (requestType) {

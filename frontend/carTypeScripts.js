@@ -1,6 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let locationsInfo = new Map();
-    onLoad();
 
     function getAvailable(location) {
         const element = document.getElementById(location);
@@ -12,18 +10,19 @@ document.addEventListener('DOMContentLoaded', () => {
             body: '"'+location.toUpperCase()+'"'
         })
         .then(response => {
+            console.log(response.data);
             if (!response.ok) {
                 response.json().then(errorData => {
                     element.textContent = errorData.message;
                 });
                 throw new Error('Network response was not ok ' + response.statusText);
             }
+            return response.json();
         })
         .then(data => {
-            console.log(data)
             // displayElement.textContent = `Response from POST: ${JSON.stringify(data)}`;
             // generateCalendar(location);
-            element.textContent = locationsInfo.get(location);
+            element.textContent = data.address + '\n' + data.location +'\n'+ data.vehicleTypes;
         })
         .catch((error) => {
             console.error('Error with POST request:', error);
@@ -134,10 +133,5 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById(location).innerHTML = calendarHtml;
     }
 
-    function onLoad() {
-        locationsInfo.set('london', 'Adress: 1A Gunton Rd, London');
-        locationsInfo.set('manchester', 'Adress: 14 Bury New Rd, Manchester');
-    }
-    
 });
    
