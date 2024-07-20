@@ -3,9 +3,9 @@ application:
   type: app
 
 environment:
-  MANCHESTER_ENDPOINT: "localhost:9004"
-  MANCHESTER_TIRECHANGEPATH: ""
+  MANCHESTER_ENDPOINT: "http://localhost:9004"
+  MANCHESTER_TIRECHANGEPATH: "/api/v2/tire-change-times"
   MANCHESTER_INFO: ""
-  LONDON_ENDPOINT: "localhost:9003"
-  LONDON_TIRECHANGEPATH: ""
+  LONDON_ENDPOINT: "http://localhost:9003"
+  LONDON_TIRECHANGEPATH: "/api/v1/tire-change-times"
   LONDON_INFO: ""

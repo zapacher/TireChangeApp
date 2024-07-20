@@ -1,9 +1,8 @@
 package ee.smit.controllers;
 
-import ee.smit.controllers.api.AvailableTimeRequest;
+import ee.smit.commons.enums.Location;
 import ee.smit.controllers.api.AvailableTimeResponse;
-import ee.smit.controllers.api.BookingRequest;
-import ee.smit.controllers.api.BookingResponse;
+import ee.smit.controllers.api.Booking;
 import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static ee.smit.api.Location.LONDON;
-import static ee.smit.api.Location.MANCHESTER;
-import static ee.smit.api.RequestType.AVAILABLE_TIME;
-import static ee.smit.api.RequestType.BOOKING;
+import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
+import static ee.smit.commons.enums.RequestType.BOOKING;
 
 @Slf4j
 @RestController("tire_change")
@@ -30,12 +27,11 @@ public class TireChangeController {
     LondonService londonService;
 
     @PostMapping("/getAvailableTime")
-    List<AvailableTimeResponse> getAvailableTime(@RequestBody AvailableTimeRequest request) {
+    List<AvailableTimeResponse> getAvailableTime(@RequestBody Location request) {
         List<AvailableTimeResponse> response = null;
-
         log.info("{} getAvailableTime Request: -> {}", this.getClass().getName(), request);
 
-        switch(request.getLocation()) {
+        switch(request) {
             case LONDON -> response = londonService.process(null, AVAILABLE_TIME);
             case MANCHESTER -> response = manchesterService.process(null, AVAILABLE_TIME);
         }
@@ -45,10 +41,10 @@ public class TireChangeController {
     }
 
     @PostMapping("/booking")
-    BookingResponse booking(@RequestBody BookingRequest request) {
+    Booking booking(@RequestBody Booking request) {
         log.info("{} booking Request: -> {}", this.getClass().getName(), request);
 
-        BookingResponse response = null;
+        Booking response = null;
 
         switch(request.getLocation()) {
             case LONDON -> response = londonService.process(request, BOOKING);

@@ -1,11 +1,11 @@
 package ee.smit.clients;
 
-import ee.smit.api.RequestType;
 import ee.smit.clients.api.london.LondonRequest;
 import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.clients.api.london.TireChangeBookingResponse;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.HttpCall;
+import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.LondonProperties;
@@ -21,8 +21,8 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.Objects;
 
-import static ee.smit.api.RequestType.AVAILABLE_TIME;
-import static ee.smit.api.RequestType.BOOKING;
+import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
+import static ee.smit.commons.enums.RequestType.BOOKING;
 @Slf4j
 @Service
 public class LondonClient {
@@ -34,7 +34,7 @@ public class LondonClient {
     LondonProperties londonProperties;
 
     public LondonResponse getAvailableTime(LondonRequest request) {
-        log.info("{} getAvailableTime Request: ->{}", this.getClass().getName(), request);
+        log.info("{} getAvailableTime Request: -> {}", this.getClass().getName(), request);
 
         LondonResponse response = LondonResponse.builder()
                 .tireChangeTimesResponse(fromXml(TireChangeTimesResponse.class, AVAILABLE_TIME, request))
@@ -45,7 +45,7 @@ public class LondonClient {
     }
 
     public LondonResponse bookTime(LondonRequest request) {
-        log.info("{} bookTime Request: ->{}", this.getClass().getName(), request);
+        log.info("{} bookTime Request: -> {}", this.getClass().getName(), request);
         /*
          !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
           reRequest of available booking time before execution call.
@@ -64,9 +64,9 @@ public class LondonClient {
         Response response = null;
         try {
             switch (requestType) {
-                case AVAILABLE_TIME -> response =  httpCall.get(URL + "available?from=" + londonRequest.getFrom()
+                case AVAILABLE_TIME -> response =  httpCall.get(URL + "/available?from=" + londonRequest.getFrom()
                         + "&until=" + londonRequest.getUntil());
-                case BOOKING -> response = httpCall.put(URL +londonRequest.getUuid()+"/booking",
+                case BOOKING -> response = httpCall.put(URL + "/" + londonRequest.getUuid()+"/booking",
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
             if(response.isSuccessful()) {
@@ -97,7 +97,9 @@ public class LondonClient {
     }
 
     public <T> T fromXml(Class<T> responseClass, RequestType requestType, LondonRequest londonRequest) {
+
         String urlResponse = urlExecutor(requestType, londonRequest);
+
         if(Objects.requireNonNull(urlResponse).isEmpty()) {
             throw new InternalServerErrorException(500, "blank london response");
         }

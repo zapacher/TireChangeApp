@@ -2,7 +2,7 @@ package ee.smit.clients;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import ee.smit.api.RequestType;
+import ee.smit.commons.enums.RequestType;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
@@ -19,8 +19,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ee.smit.api.RequestType.AVAILABLE_TIME;
-import static ee.smit.api.RequestType.BOOKING;
+import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
+import static ee.smit.commons.enums.RequestType.BOOKING;
 
 @Slf4j
 @Service

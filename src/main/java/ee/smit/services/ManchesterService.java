@@ -1,13 +1,12 @@
 package ee.smit.services;
 
-import ee.smit.api.RequestType;
+import ee.smit.commons.enums.RequestType;
 import ee.smit.clients.ManchesterClient;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.controllers.api.AvailableTimeResponse;
-import ee.smit.controllers.api.BookingRequest;
-import ee.smit.controllers.api.BookingResponse;
+import ee.smit.controllers.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +21,7 @@ public class ManchesterService {
     @Autowired
     ManchesterClient manchesterClient;
 
-    public <T> T process(BookingRequest request, RequestType requestType) {
+    public <T> T process(Booking request, RequestType requestType) {
         switch(requestType) {
             case AVAILABLE_TIME -> {
                 return (T) getAvailableTime();
@@ -49,23 +48,23 @@ public class ManchesterService {
         return availableTimeResponse;
     }
 
-    private BookingResponse booking(BookingRequest bookingRequest) {
+    private Booking booking(Booking request) {
         ManchesterResponse manchesterResponse = manchesterClient.bookTime(
                 ManchesterRequest.builder()
-                        .id(bookingRequest.getId())
-                        .contactInformation(bookingRequest.getInfo())
+                        .id(request.getId())
+                        .contactInformation(request.getInfo())
                         .build()
         );
 
         if(manchesterResponse.getErrorResponse() == null) {
-            return BookingResponse.builder()
+            return Booking.builder()
                     .id(manchesterResponse.getId())
                     .bookingTime(manchesterResponse.getTime())
                     .isBooked(manchesterResponse.isAvailable())
                     .build();
         }
 
-        return BookingResponse.builder()
+        return Booking.builder()
                 .errorResponse(manchesterResponse.getErrorResponse())
                 .build();
     }

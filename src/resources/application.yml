@@ -1,3 +1,17 @@
+application:
+  name: ee.smit
+  type: app
+
+environment:
+  manchester:
+    endpoint: "http://localhost:9004"
+    tirechangepath: "/api/v2/tire-change-times"
+    info: ""
+  london:
+    endpoint: "http://localhost:9003"
+    tirechangepath: "/api/v1/tire-change-times"
+    info: ""
+
 #management:
 #  endpoints:
 #    web:

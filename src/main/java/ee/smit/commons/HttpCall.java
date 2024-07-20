@@ -43,7 +43,7 @@ public class HttpCall {
         try {
             return client.newCall(request).execute();
         } catch (IOException ignore) {
-            throw new InternalServerErrorException();
+            return null;
         }
     }
 
