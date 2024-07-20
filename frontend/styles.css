@@ -9,11 +9,15 @@ body {
     background-color: #f0f0f0;
 }
 
-button {
+buttons {
     margin: 10px;
     padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
+    display: flex;
+    justify-content: center; /* Center buttons horizontally */
+    gap: 10px; /* Space between buttons */
+    margin-bottom: 20px; /* Space below the button row */
 }
 
 .container {
