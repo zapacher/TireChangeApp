@@ -1,9 +1,9 @@
 package ee.smit.services;
 
-import ee.smit.commons.enums.RequestType;
 import ee.smit.clients.ManchesterClient;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
+import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.controllers.api.AvailableTimeResponse;
 import ee.smit.controllers.api.Booking;
@@ -56,16 +56,10 @@ public class ManchesterService {
                         .build()
         );
 
-        if(manchesterResponse.getErrorResponse() == null) {
-            return Booking.builder()
-                    .id(manchesterResponse.getId())
-                    .bookingTime(manchesterResponse.getTime())
-                    .isBooked(manchesterResponse.isAvailable())
-                    .build();
-        }
-
         return Booking.builder()
-                .errorResponse(manchesterResponse.getErrorResponse())
+                .id(manchesterResponse.getId())
+                .bookingTime(manchesterResponse.getTime())
+                .isBooked(!manchesterResponse.isAvailable())
                 .build();
     }
 }

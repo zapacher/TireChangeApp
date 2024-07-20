@@ -1,11 +1,10 @@
 package ee.smit.services;
 
-import ee.smit.commons.errors.ErrorResponse;
-import ee.smit.commons.enums.RequestType;
 import ee.smit.clients.LondonClient;
 import ee.smit.clients.api.london.LondonRequest;
 import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
+import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.controllers.api.AvailableTimeResponse;
 import ee.smit.controllers.api.Booking;
@@ -58,15 +57,9 @@ public class LondonService {
                 .bookingInfo(request.getInfo())
                 .build());
 
-        if(londonResponse.getErrorResponse() == null) {
-            return Booking.builder()
-                    .bookingTime(londonResponse.getTireChangeBookingResponse().getTime())
-                    .isBooked(true)
-                    .build();
-        }
-
         return Booking.builder()
-                .errorResponse(londonResponse.getErrorResponse())
+                .bookingTime(londonResponse.getTireChangeBookingResponse().getTime())
+                .isBooked(true)
                 .build();
     }
 }
