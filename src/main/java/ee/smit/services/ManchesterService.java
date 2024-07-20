@@ -12,8 +12,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
+
+import static ee.smit.commons.enums.CarTypes.CAR;
+import static ee.smit.commons.enums.CarTypes.TRUCK;
 
 @Service
 public class ManchesterService {
@@ -33,19 +35,20 @@ public class ManchesterService {
         }
     }
 
-    private List<AvailableTimeResponse> getAvailableTime() {
+    private AvailableTimeResponse getAvailableTime() {
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(
                 ManchesterRequest.builder()
                         .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .build()
         );
 
-        List<AvailableTimeResponse> availableTimeResponse = new ArrayList<>();
+        AvailableTimeResponse response = new AvailableTimeResponse();
+        response.setCarTypes(List.of(CAR, TRUCK));
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
-            availableTimeResponse.add(new AvailableTimeResponse(availableTime.getId(), availableTime.getTime()));
+            response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(availableTime.getId(), availableTime.getTime()));
         }
 
-        return availableTimeResponse;
+        return response;
     }
 
     private Booking booking(Booking request) {

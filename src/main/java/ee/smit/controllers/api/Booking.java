@@ -1,7 +1,7 @@
 package ee.smit.controllers.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import ee.smit.commons.enums.Location;
+import ee.smit.commons.enums.Locations;
 import ee.smit.controllers.api.groups.Request;
 import ee.smit.controllers.api.groups.Response;
 import lombok.AllArgsConstructor;
@@ -28,7 +28,7 @@ public class Booking {
     String info;
 
     @NotNull(groups = {Request.class})
-    Location location;
+    Locations location;
 
     boolean isBooked;
 }

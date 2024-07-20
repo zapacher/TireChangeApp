@@ -1,5 +1,5 @@
 package ee.smit.commons.enums;
 
-public enum Location {
+public enum Locations {
     LONDON, MANCHESTER
 }

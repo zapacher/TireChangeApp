@@ -68,7 +68,7 @@ public class ManchesterClient {
                     default -> throw new InternalServerErrorException();
                 }
             }
-        } catch(IOException ignore){
+        } catch(IOException ignore) {
             throw new InternalServerErrorException();
         }
     }

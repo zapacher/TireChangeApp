@@ -1,6 +1,6 @@
 package ee.smit.controllers;
 
-import ee.smit.commons.enums.Location;
+import ee.smit.commons.enums.Locations;
 import ee.smit.controllers.api.AvailableTimeResponse;
 import ee.smit.controllers.api.Booking;
 import ee.smit.services.LondonService;
@@ -27,8 +27,8 @@ public class TireChangeController {
     LondonService londonService;
 
     @PostMapping("/getAvailableTime")
-    List<AvailableTimeResponse> getAvailableTime(@RequestBody Location request) {
-        List<AvailableTimeResponse> response = null;
+    AvailableTimeResponse getAvailableTime(@RequestBody Locations request) {
+        AvailableTimeResponse response = null;
         log.info("{} getAvailableTime Request: -> {}", this.getClass().getName(), request);
 
         switch(request) {

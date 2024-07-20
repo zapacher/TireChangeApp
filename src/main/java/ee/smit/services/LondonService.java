@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static ee.smit.commons.enums.CarTypes.CAR;
+
 @Service
 public class LondonService {
 
@@ -35,7 +37,7 @@ public class LondonService {
         }
     }
 
-    private List<AvailableTimeResponse> getAvailableTime() {
+    private AvailableTimeResponse getAvailableTime() {
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
                         .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
@@ -43,12 +45,16 @@ public class LondonService {
                         .build()
         );
 
-        List<AvailableTimeResponse> availableTimeDtoList = new ArrayList<>();
-        for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
-            availableTimeDtoList.add(new AvailableTimeResponse(String.valueOf(availableTime.getUuid()), availableTime.getTime()));
-        }
+        System.out.println("================================");
+        AvailableTimeResponse response = new AvailableTimeResponse();
+        System.out.println("================================" + response.getCarTypes());
+        response.getCarTypes().add(CAR);
+        System.out.println("================================" + response);
 
-        return availableTimeDtoList;
+        for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
+            response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(String.valueOf(availableTime.getUuid()),availableTime.getTime()));
+        }
+        return response;
     }
 
     private Booking booking(Booking request) {

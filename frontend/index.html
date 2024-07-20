@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tire Change Booking</title>
+    <title>Toggle Elements</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Book a Time for Tire Change</h1>
-<div id="calendar">
-    <input type="date" id="bookingDate" name="bookingDate">
-    <input type="time" id="bookingTime" name="bookingTime">
-    <button onclick="bookTime()">Book Time</button>
-</div>
-<script src="scripts.js"></script>
+    <h1>Toggle Elements Example</h1>
+    <button id="showButton">Car</button>
+    <button id="hideButton">Truck</button>
+    <div id="container">
+        <div id="element1" class="element">Element 1</div>
+        <div id="element2" class="element">Element 2</div>
+        <div id="element2" class="element">Element 2</div>
+        <div id="element2" class="element">Element 2</div>
+        <!-- Additional elements can be added here -->
+    </div>
+    <script src="scripts.js"></script>
 </body>
 </html>
