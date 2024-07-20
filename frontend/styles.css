@@ -16,7 +16,7 @@ button {
     cursor: pointer;
 }
 
-#container {
+.container {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Two columns of equal width */
     gap: 10px; /* Space between grid items */
@@ -27,4 +27,8 @@ button {
 .element {
     padding: 20px;
     background-color: #fff;
-    border: 
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box; /* Ensure padding and border are included in the element's width and height */
+}

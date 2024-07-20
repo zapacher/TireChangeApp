@@ -14,8 +14,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static ee.smit.commons.enums.CarTypes.CAR;
-import static ee.smit.commons.enums.CarTypes.TRUCK;
+import static ee.smit.commons.enums.VehicleTypes.CAR;
+import static ee.smit.commons.enums.VehicleTypes.TRUCK;
 
 @Service
 public class ManchesterService {
@@ -43,7 +43,7 @@ public class ManchesterService {
         );
 
         AvailableTimeResponse response = new AvailableTimeResponse();
-        response.setCarTypes(List.of(CAR, TRUCK));
+        response.setVehicleTypes(List.of(CAR, TRUCK));
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
             response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(availableTime.getId(), availableTime.getTime()));
         }

@@ -59,6 +59,11 @@ public class ManchesterClient {
                 case BOOKING -> response = httpCall.post(URL + "/" + manchesterRequest.getId() + "/booking",
                         "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
             }
+
+            if(response == null) {
+                throw new BadRequestException(500, "Service is currently unreachable");
+            }
+
             if (response.isSuccessful()) {
                 return response.body().string();
             } else {

@@ -1,5 +1,5 @@
 package ee.smit.commons.enums;
 
-public enum CarTypes {
+public enum VehicleTypes {
     CAR, TRUCK
 }

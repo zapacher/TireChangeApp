@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
-import static ee.smit.commons.enums.CarTypes.CAR;
+import static ee.smit.commons.enums.VehicleTypes.CAR;
 
 @Service
 public class LondonService {
@@ -47,8 +45,8 @@ public class LondonService {
 
         System.out.println("================================");
         AvailableTimeResponse response = new AvailableTimeResponse();
-        System.out.println("================================" + response.getCarTypes());
-        response.getCarTypes().add(CAR);
+        System.out.println("================================" + response.getVehicleTypes());
+        response.getVehicleTypes().add(CAR);
         System.out.println("================================" + response);
 
         for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {

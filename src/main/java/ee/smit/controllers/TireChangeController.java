@@ -7,6 +7,7 @@ import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,11 @@ import static ee.smit.commons.enums.RequestType.BOOKING;
 
 @Slf4j
 @RestController("tire_change")
-@RequestMapping("/tire_change")
+@RequestMapping(
+        path = "/tire_change",
+        produces = MediaType.APPLICATION_JSON_VALUE,
+        consumes = MediaType.APPLICATION_JSON_VALUE
+)
 public class TireChangeController {
     @Autowired
     ManchesterService manchesterService;
