@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class LondonService {
@@ -45,7 +46,7 @@ public class LondonService {
 
         List<AvailableTimeResponse> availableTimeDtoList = new ArrayList<>();
         for(TireChangeTimesResponse.AvailableTime availableTime: londonAvailableTime.getAvailableTime()) {
-            availableTimeDtoList.add(new AvailableTimeResponse(availableTime.getUuid(), availableTime.getTime()));
+            availableTimeDtoList.add(new AvailableTimeResponse(String.valueOf(availableTime.getUuid()), availableTime.getTime()));
         }
 
         return availableTimeDtoList;
@@ -53,7 +54,7 @@ public class LondonService {
 
     private BookingResponse booking(BookingRequest bookingRequest) {
         LondonResponse londonResponse = londonClient.bookTime(LondonRequest.builder()
-                .uuid(bookingRequest.getId())
+                .uuid(UUID.fromString(bookingRequest.getId()))
                 .bookingInfo(bookingRequest.getInfo())
                 .build());
 

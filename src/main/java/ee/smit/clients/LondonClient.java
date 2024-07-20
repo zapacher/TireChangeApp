@@ -20,7 +20,6 @@ import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Objects;
-import java.util.UUID;
 
 import static ee.smit.api.RequestType.AVAILABLE_TIME;
 import static ee.smit.api.RequestType.BOOKING;
@@ -89,19 +88,10 @@ public class LondonClient {
                 .from("2006-01-02")
                 .until("2030-01-02")
                 .build());
-        boolean isAvailable = false;
-        for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
-            if(availableTime.getUuid().equals(londonRequest.getUuid())) {
-                isAvailable = true;
-                break;
-            }
-        }
-        if(!isAvailable) {
-            try {
-                UUID.fromString(londonRequest.getUuid());
-            } catch (IllegalArgumentException ignore) {
-                throw new InternalServerErrorException();
-            }
+
+        if(londonResponse.getTireChangeTimesResponse().getAvailableTime()
+                .stream()
+                .noneMatch(availableTime -> availableTime.getUuid().equals(londonRequest.getUuid()))) {
             throw new BadRequestException(422, "This time is already booked");
         }
     }
