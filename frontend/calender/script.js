@@ -1,4 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
+    let dateSelected;
+
     // Initialize Flatpickr for inline display
 
     const uuidDateMap = new Map([
@@ -7,11 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
         ['f6e68b47-43c6-4e0b-b622-3d6c747ae3s0', '2024-07-23T09:00:00Z'],
         ['a5c02a7b-3b91-4d87-bcde-18d8a740223e', '2024-07-25T08:00:00Z']
     ]);
+    console.log(uuidDateMap)
 
     // Convert Map to Flatpickr-compatible format
     const formattedDates = Array.from(uuidDateMap.values()).map(date => date.split('T')[0]);
     const uuidMap = new Map(Array.from(uuidDateMap.entries()).map(([uuid, date]) => [date.split('T')[0], uuid]));
-    const dateTimeMap = parseDate();
+    // const dateTimeMap = parseDate();
 
 
     flatpickr("#calendar", {
@@ -22,67 +25,61 @@ document.addEventListener('DOMContentLoaded', function() {
         defaultHour: 12, 
         weekNumbers: true,
         onChange: function(selectedDates, dateStr, instance) {
-            const selectedDate = dateStr;
-            const uuid = uuidMap.get(selectedDate);
-            if (uuid) {
-                console.log(uuid +'   '+ selectedDate)
-                console.log('Test     '+uuidDateMap.valueOf('2024-07-22T08:00:00Z'));
-            } else {
-            }
+            dateSelected = dateStr;
+            timePicker(parseDate(uuidDateMap, dateStr).get(dateStr));
         }
     });
 
-    const availableTimes = [
-        '08:00','09:30', '16:30'
-    ];
+    function timePicker(times) {
+        const timeSelector = document.getElementById('time-selector');
+        timeSelector.innerHTML = '';
+        // const times = parseDate(uuidDateMap.get(dateSelected));
+        console.log(times)
+        
 
-    flatpickr("#time-picker", {
-        inline: true,
-        enableTime: true,
-        noCalendar: true,
-        dateFormat: "H:i",
-        time_24hr: true,
-        enable: availableTimes.map(time => ({ from: time, to: time })),
-        minuteIncrement: 30,
-        onChange: function(selectedDates, dateStr, instance) {
-            console.log('Selected Time:', dateStr);
-        }
-    });
-
-    function processText() {
-        // Get the value from the textarea
-        return document.getElementById('textInput').value;
+        times.forEach(time => {
+            const div = document.createElement('div');
+            div.textContent = time;
+            div.className = 'time-option';
+            div.dataset.time = time;
+            div.addEventListener('click', () => {
+                document.querySelectorAll('.time-option').forEach(option => {
+                    option.classList.remove('selected');
+                });
+                div.classList.add('selected');
+            });
+            timeSelector.appendChild(div);
+        });
     }
+
 
 
     document.getElementById('book-button').addEventListener('click', function() {
         const checkbox = document.getElementById('confirmCheckbox');
         if(!checkbox.checked) {
             window.alert("You must confirm checkbox");
-            window.location.reload();
             return;
         };
+        const info = document.getElementById('textInput').value;
+        const time = document.querySelector('.time-option.selected').dataset.time;
+        const date = dateSelected;
+        const fullDate = date+'T'+time+':00Z';
 
-        console.log(processText());
-        
-        window.alert('Thank you for booking ' + processText());
+        console.log(fullDate);
+
+
+        const id = getKeyByValue(uuidDateMap, fullDate);
+
+        console.log('ID : '  + id);
+
+        window.alert('Thank you for booking ' + info + ' ' + fullDate);
         window.location.reload();
         
-
-
-        // const bookingTime = document.getElementById('booking-time').value;
-        // if (bookingTime) {
-        //     console.log('Booking time:', bookingTime);
-        //     // You can now send this booking time to your server or handle it as needed
-        //     alert('Booking time: ' + bookingTime);
-        // } else {
-        //     alert('Please select a booking time.');
-        // }
     });
 
-    function parseDate() {
+    function parseDate(dateList) {
         const dateTimeMap = new Map();
-        uuidDateMap.forEach((dateString, uuid) => {
+        dateList.forEach((dateString, uuid) => {
             const date = new Date(dateString);
             const dateKey = date.toISOString().split('T')[0]; // Get date part (YYYY-MM-DD)
             const time = dateString.split('T')[1].split('Z')[0]; // Get time part (HH:mm:ss)
@@ -114,7 +111,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         return null; // or undefined, or any other value to indicate not found
     }
-    const valueToFind = '2024-07-25T08:00:00Z';
-    const key = getKeyByValue(uuidDateMap, valueToFind);
-    console.log(key);    
 });

@@ -37,3 +37,71 @@ buttons {
     box-sizing: border-box; 
     display: block;/* Ensure padding and border are included in the element's width and height */
 }
+
+[class^="booking-details"] {
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    margin: 20px 0;
+}
+
+[id^="calendar"] {
+    margin-top: 20px;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+}
+
+[class^="time-picker"]  {
+    display: none;
+}
+[id^="textInput"] {
+    margin-top: 10px;
+    margin-bottom: 12px;
+    width: 100%;         /* Full width of the container */
+    height: 150px;       /* Fixed height */
+    padding: 10px;       /* Padding inside the textarea */
+    border: 1px solid #ccc; /* Border styling */
+    border-radius: 4px;  /* Rounded corners */
+    box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+    overflow-y: auto;    /* Enable vertical scrolling */
+    overflow-x: hidden;  /* Hide horizontal scrolling */
+}
+[class^="checkbox-container"] {
+    margin-bottom: 10px;
+}
+[class^="time-selector-container"] {
+    width: 200px; /* Width of the time selector */
+    height: 300px; /* Height of the container */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Optional: border for the container */
+    padding: 10px; /* Optional: padding inside the container */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for the container */
+}
+
+[class^="time-selector-container"] {
+    width: 200px; /* Width of the time selector */
+    height: 90px; /* Height to fit 3 time options */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    border: 1px solid #ccc; /* Optional: border for the container */
+    padding: 5px; /* Optional: padding inside the container */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for the container */
+    position: relative; /* Ensure proper positioning of scrollbar */
+}
+
+[class^="time-selector"] {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-option {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.time-option:hover {
+    background-color: #f0f0f0;
+}
+
+.time-option.selected {
+    background-color: #d0d0d0;
+}

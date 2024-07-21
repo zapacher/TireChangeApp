@@ -28,6 +28,8 @@
             display: none;
         }
         #textInput {
+            margin-top: 10px;
+            margin-bottom: 12px;
             width: 100%;         /* Full width of the container */
             height: 150px;       /* Fixed height */
             padding: 10px;       /* Padding inside the textarea */
@@ -40,6 +42,43 @@
         .checkbox-container {
             margin-bottom: 10px;
         }
+        #time-selector-container {
+            width: 200px; /* Width of the time selector */
+            height: 300px; /* Height of the container */
+            overflow-y: auto; /* Enable vertical scrolling */
+            border: 1px solid #ccc; /* Optional: border for the container */
+            padding: 10px; /* Optional: padding inside the container */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for the container */
+        }
+
+        #time-selector-container {
+    width: 200px; /* Width of the time selector */
+    height: 90px; /* Height to fit 3 time options */
+    overflow-y: auto; /* Enable vertical scrolling if needed */
+    border: 1px solid #ccc; /* Optional: border for the container */
+    padding: 5px; /* Optional: padding inside the container */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for the container */
+    position: relative; /* Ensure proper positioning of scrollbar */
+}
+
+#time-selector {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-option {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.time-option:hover {
+    background-color: #f0f0f0;
+}
+
+.time-option.selected {
+    background-color: #d0d0d0;
+}
     </style>
 </head>
 <body>
@@ -47,15 +86,22 @@
 
     <div class="container">
         <div id="calendar"></div>
+
         <div class="booking-details">
-            <input id="time-picker"/>
+            <div id="time-selector-container">
+                <div id="time-selector">
+                </div>
+            </div>
+
             <textarea id="textInput" placeholder="Please enter contact information..."></textarea>
+            
             <div class="checkbox-container">
                 <input type="checkbox" id="confirmCheckbox" />
                 <label for="confirmCheckbox">Confirm</label>
             </div>
             <br><button id="book-button">Book</button>
         </div>
+        
     </div>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="script.js"></script>
