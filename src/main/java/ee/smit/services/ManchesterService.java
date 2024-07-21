@@ -14,10 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import static ee.smit.commons.enums.VehicleTypes.CAR;
-import static ee.smit.commons.enums.VehicleTypes.TRUCK;
 
 @Service
 public class ManchesterService {
@@ -49,7 +45,7 @@ public class ManchesterService {
         );
 
         AvailableTimeResponse response = new AvailableTimeResponse();
-        response.setVehicleTypes(List.of(CAR, TRUCK));
+        response.setVehicleTypes(manchesterProperties.getVehicleTypes());
 
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
             response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(availableTime.getId(), availableTime.getTime()));

@@ -4,10 +4,12 @@ import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.VehicleTypes;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Data
+@Component
 @ConfigurationProperties(prefix = "environment.manchester")
 public class ManchesterProperties {
     String address;

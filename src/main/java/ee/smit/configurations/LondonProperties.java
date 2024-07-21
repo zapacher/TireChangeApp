@@ -8,8 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static ee.smit.commons.enums.Locations.LONDON;
-
 @Data
 @Component
 @ConfigurationProperties(prefix = "environment.london")

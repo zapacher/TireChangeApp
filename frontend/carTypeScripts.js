@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-    let finalReserveCheck = null;
     let locationVehicleMap = new Map();
-    let allAvailableByLocation = new Map();
+    const allAvailableByLocation = new Map();
+    let timeSelected = null;
 
     function getAvailableLocations() {
-        const element = document.getElementById(location);
         fetch('http://localhost:8080/tire_change/availableLocations', {
             method: 'GET',
             headers: {
@@ -14,9 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => {
             if (!response.ok) {
                 response.json().then(errorData => {
-                    element.textContent = errorData.message;
+                    window.alert(errorData.message)
+                    throw new Error(errorData);
                 });
-                throw new Error('Network response was not ok ' + response.statusText);
             }
             return response.json();
         })
@@ -24,12 +23,12 @@ document.addEventListener('DOMContentLoaded', () => {
             locationVehicleMap = new Map(Object.entries(data));
         })
         .catch((error) => {
-            console.error('Error with POST request:', error);
+            console.error('Error with GET request:', error);
+            window.location.reload();
         });
     }
 
     getAvailableLocations();
-
 
     function createLocationDiv(location) {
         const div = document.createElement('div');
@@ -72,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const textAreaInfo = document.createElement('textarea');
             textAreaInfo.id = 'info-input-'+locationLow;
-            textAreaInfo.placeholder = "Please enter contact information...";
+            textAreaInfo.placeholder = "Please provide contact information...";
             bookingDetailsDiv.appendChild(textAreaInfo);
 
             const checkboxContainerDiv = document.createElement('div');
@@ -84,16 +83,26 @@ document.addEventListener('DOMContentLoaded', () => {
             checboxConfirm.id = 'confirmCheckbox-'+locationLow;
             checkboxContainerDiv.appendChild(checboxConfirm);
 
+            checboxConfirm.addEventListener('change', function() {
+                if (this.checked) {
+                    reserveButton.style.display = 'block';
+                } else {
+                    reserveButton.style.display = 'none';
+                }
+            });
+
             const checkboxLabel = document.createElement('label');
             checkboxLabel.htmlFor = 'confirmCheckbox-'+locationLow;
-            checkboxLabel.textContent = 'Accept';
+            checkboxLabel.textContent = 'Accept policy';
             checkboxContainerDiv.appendChild(checkboxLabel);
             
             const reserveButton = document.createElement('button');
             reserveButton.id = 'button-' + locationLow;
             reserveButton.textContent = 'Reserve';
+            reserveButton.style.display = 'none';
             locationDiv.appendChild(reserveButton);
-            
+
+
             reserveButton.addEventListener('click', function() {
                 const checkbox = document.getElementById('confirmCheckbox-'+locationLow);
                 if(!checkbox.checked) {
@@ -107,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const time = document.querySelector('.time-option.selected-'+locationLow).dataset.time;
+                const time = timeSelected;
                 const date = dateSelected;
                 
                 if(time=="" || date==null) {
@@ -122,7 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     window.alert("Please contact support");
                 }
                 
-                finalReserveCheck = id;
                 booking(id, location, info);
 
                 window.alert('Reserved on ' + date + ' at ' + time + ' Have a Nice day! :)');
@@ -168,9 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => {
             if (!response.ok) {
                 response.json().then(errorData => {
-                    element.textContent = errorData.message;
+                    document.getElementById(location.toLowerCase()).style.display = 'none';
+                    throw new Error(errorData.message);
                 });
-                throw new Error('Network response was not ok ' + response.statusText);
             }
             return response.json();
         })
@@ -220,19 +228,21 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => {
             if (!response.ok) {
                 response.json().then(errorData => {
-                    element.textContent = errorData.message;
+                    window.alert(errorData.message)
+                    throw new Error(errorData.message);
                 });
-                throw new Error('Network response was not ok ' + response.statusText);
             }
             return response.json();
         })
         .then(data => {
             if(!data.booked) {
                 window.alert("Something went wrong, pleas try again or contact support")
+
             }
         })
         .catch((error) => {
             console.error('Error with POST request:', error);
+            window.location.reload();
         });
     }
 
@@ -246,23 +256,17 @@ document.addEventListener('DOMContentLoaded', () => {
             div.className = 'time-option';
             div.dataset.time = time;
             div.addEventListener('click', () => {
-                document.querySelectorAll('time-option').forEach(option => {
-                    option.classList.remove('selected-'+location);
-                    
+                document.querySelectorAll('.time-option').forEach(option => {
+                    option.style.backgroundColor = 'white'
+                    timeSelected = div.dataset.time;
                 });
-                div.classList.add('selected-'+location);
+                div.style.backgroundColor = '#d0d0d0'
                 document.getElementById('info-input-'+location).style.display = 'block';
-                // document.getElementById('checkbox-container-'+location).style.display = 'grid';
                 document.getElementsByClassName('checkbox-container-'+location)[0].style.display = 'block';
-                document.getElementById('button-'+location).style.display = 'grid';
             });
             timeSelector.appendChild(div);
         });
     }
-
-
-
-
 
     const carSelector = document.getElementById('carSelector');
     const truckSelector = document.getElementById('truckSelector');
@@ -281,10 +285,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const dateTimeMap = new Map();
         dateList.forEach((dateString, uuid) => {
             const date = new Date(dateString);
-            const dateKey = date.toISOString().split('T')[0]; // Get date part (YYYY-MM-DD)
-            const time = dateString.split('T')[1].split('Z')[0]; // Get time part (HH:mm:ss)
+            const dateKey = date.toISOString().split('T')[0];
+            const time = dateString.split('T')[1].split('Z')[0]; 
 
-            const formattedTime = time.substring(0, 5); // Extract HH:mm
+            const formattedTime = time.substring(0, 5);
             if (!dateTimeMap.has(dateKey)) {
                 dateTimeMap.set(dateKey, []);
             }
@@ -296,7 +300,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         dateTimeMap.forEach((times, date) => {
-            times.sort(); // Optional: sort times
+            times.sort();
             dateTimeMap.set(date, times);
         });
         return dateTimeMap;
@@ -308,7 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return key;
             }
         }
-        return null; // or undefined, or any other value to indicate not found
+        return null;
     }
 
 });

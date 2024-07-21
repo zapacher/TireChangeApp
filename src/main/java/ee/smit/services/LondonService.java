@@ -17,15 +17,15 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
-import static ee.smit.commons.enums.VehicleTypes.CAR;
-
 @Service
 public class LondonService {
-    @Autowired
-    LondonProperties londonProperties;
 
     @Autowired
+    LondonProperties londonProperties;
+    @Autowired
     LondonClient londonClient;
+
+    final static int MONTHS_RANGE = 6;
 
     public <T> T process(T request, RequestType requestType) {
         isLocationAvailable();
@@ -45,12 +45,12 @@ public class LondonService {
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
                         .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                        .until(LocalDate.now().plusMonths(3).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .until(LocalDate.now().plusMonths(MONTHS_RANGE).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .build()
         );
 
         AvailableTimeResponse response = new AvailableTimeResponse();
-        response.getVehicleTypes().add(CAR);
+        response.getVehicleTypes().addAll(londonProperties.getVehicleTypes());
 
         for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
             response.getAvailableTimeList().add(
