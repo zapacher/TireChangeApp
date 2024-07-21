@@ -12,6 +12,6 @@ services:
   frontend:
     build:
       context: .
-      dockerfile: tirefrontend/Dockerfile
+      dockerfile: frontend/Dockerfile
     ports:
       - "9005:80"

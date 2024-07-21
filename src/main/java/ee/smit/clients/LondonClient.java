@@ -34,18 +34,18 @@ public class LondonClient {
     LondonProperties londonProperties;
 
     public LondonResponse getAvailableTime(LondonRequest request) {
-        log.info("{} getAvailableTime Request: -> {}", this.getClass().getName(), request);
+        log.info("getAvailableTime Request: -> {}", request);
 
         LondonResponse response = LondonResponse.builder()
                 .tireChangeTimesResponse(fromXml(TireChangeTimesResponse.class, AVAILABLE_TIME, request))
                 .build();
 
-        log.info("{} getAvailableTime Response: -> {}", this.getClass().getName(), response);
+        log.info("getAvailableTime Response: -> {}", response);
         return response;
     }
 
     public LondonResponse bookTime(LondonRequest request) {
-        log.info("{} bookTime Request: -> {}", this.getClass().getName(), request);
+        log.info("bookTime Request: -> {}", request);
         /*
          !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
           reRequest of available booking time before execution call.
@@ -55,7 +55,7 @@ public class LondonClient {
                 .tireChangeBookingResponse(fromXml(TireChangeBookingResponse.class, BOOKING, request))
                 .build();
 
-        log.info("{} bookTime Response: -> {}", this.getClass().getName(), response);
+        log.info("bookTime Response: -> {}", response);
         return response;
     }
 
@@ -64,12 +64,13 @@ public class LondonClient {
         Response response = null;
         try {
             switch (requestType) {
-                case AVAILABLE_TIME -> response =  httpCall.get(URL + "/available?from=" + londonRequest.getFrom()
+                case AVAILABLE_TIME -> response = httpCall.get(URL + "/available?from=" + londonRequest.getFrom()
                         + "&until=" + londonRequest.getUntil());
                 case BOOKING -> response = httpCall.put(URL + "/" + londonRequest.getUuid()+"/booking",
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
-            if(response.isSuccessful()) {
+            log.info("full response -> {}", response);
+            if(response.code()==200) {
                 return response.body().string();
             } else {
                 switch(response.code()) {
