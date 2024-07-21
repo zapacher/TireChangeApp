@@ -4,16 +4,17 @@ import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
+import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+@EnableConfigurationProperties(ManchesterProperties.class)
 @SpringBootTest(classes = ManchesterClient.class)
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
 public class TestManchesterClient {

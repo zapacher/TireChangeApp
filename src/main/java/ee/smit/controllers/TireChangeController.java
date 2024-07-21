@@ -47,7 +47,7 @@ public class TireChangeController {
     @PostMapping("/getAvailableTime")
     AvailableTimeResponse getAvailableTime(@RequestBody Locations request) {
         AvailableTimeResponse response = null;
-        log.info("{} getAvailableTime Request: -> {}", this.getClass().getName(), request);
+        log.info("getAvailableTime Request: -> {}", request);
 
         switch(request) {
             case LONDON -> response = londonService.process(null, AVAILABLE_TIME);

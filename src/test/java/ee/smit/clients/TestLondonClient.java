@@ -4,13 +4,15 @@ import ee.smit.clients.api.london.LondonRequest;
 import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
-import ee.smit.commons.errors.InternalServerErrorException;
+import ee.smit.configurations.LondonProperties;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -43,7 +45,7 @@ public class TestLondonClient {
     void test_LondonRequestBooking() {
         test_LondonRequestAvailableTime();
 
-        String londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
+        UUID londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
 
         LondonResponse londonResponse = londonClient.bookTime(
                 LondonRequest.builder()
@@ -62,7 +64,7 @@ public class TestLondonClient {
     void test_londonBookingError() {
         test_LondonRequestAvailableTime();
 
-        String londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
+        UUID londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
         String info = "TEST_INFO";
         dummyCallLondon(londonBookingTestUuid, info);
         assertAll(
@@ -80,17 +82,17 @@ public class TestLondonClient {
                                         .bookingInfo(info+1)
                                         .build())
                 ),
-                () -> assertThrows(InternalServerErrorException.class,
+                () -> assertThrows(BadRequestException.class,
                         () -> londonClient.bookTime(
                                 LondonRequest.builder()
-                                        .uuid("null")
+                                        .uuid(UUID.randomUUID())
                                         .bookingInfo("null")
                                         .build())
                 )
         );
     }
 
-    private void dummyCallLondon(String id, String info) {
+    private void dummyCallLondon(UUID id, String info) {
         try {
             londonClient.bookTime(
                     LondonRequest.builder()

@@ -2,9 +2,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let locationVehicleMap = new Map();
     const allAvailableByLocation = new Map();
     let timeSelected = null;
+    const endpointUrl = 'http://localhost:9006/';
 
     function getAvailableLocations() {
-        fetch('http://localhost:8080/tire_change/availableLocations', {
+        fetch(endpoint+'tire_change/availableLocations', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
@@ -166,7 +167,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let element = document.getElementById(location.toLowerCase());
 
         let response;
-        fetch('http://localhost:8080/tire_change/getAvailableTime', {
+        fetch(endpoint+'tire_change/getAvailableTime', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -218,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function booking(id, location, info) {
         const element = document.getElementById(location);
-        fetch('http://localhost:8080/tire_change/booking', {
+        fetch(endpoint+'tire_change/booking', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
