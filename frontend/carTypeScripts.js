@@ -114,8 +114,17 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function createCalender() {}
+    function fillCalender(calenderData) {}
+
+    const bookTime = document.getElementById('bookTime');
+
     const carSelector = document.getElementById('carSelector');
     const truckSelector = document.getElementById('truckSelector');
+
+    bookTime.addEventListener('click', () => {
+        booking(id, location, info);
+    })
 
     carSelector.addEventListener('click', () => {
         const locations = getLocationsForVehicle('CAR');

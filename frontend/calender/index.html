@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>JQuery Timepicker Example</title>
+    <link href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            text-align: center;
+            justify-content: center; /* Centers horizontally */
+            align-items: center; /* Centers vertically */
+        }
+        .booking-details {
+            justify-content: center; /* Centers horizontally */
+            align-items: center; /* Centers vertically */
+            margin: 20px 0;
+        }
+        #calendar {
+            margin-top: 20px;
+            justify-content: center; /* Centers horizontally */
+            align-items: center; /* Centers vertically */
+        }
+        #time-picker {
+            display: none;
+        }
+        #textInput {
+            width: 100%;         /* Full width of the container */
+            height: 150px;       /* Fixed height */
+            padding: 10px;       /* Padding inside the textarea */
+            border: 1px solid #ccc; /* Border styling */
+            border-radius: 4px;  /* Rounded corners */
+            box-sizing: border-box; /* Includes padding and border in the element's total width and height */
+            overflow-y: auto;    /* Enable vertical scrolling */
+            overflow-x: hidden;  /* Hide horizontal scrolling */
+        }
+        .checkbox-container {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="container">
+        <div id="calendar"></div>
+        <div class="booking-details">
+            <input id="time-picker"/>
+            <textarea id="textInput" placeholder="Please enter contact information..."></textarea>
+            <div class="checkbox-container">
+                <input type="checkbox" id="confirmCheckbox" />
+                <label for="confirmCheckbox">Confirm</label>
+            </div>
+            <br><button id="book-button">Book</button>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="script.js"></script>
+</body>
+</html>
