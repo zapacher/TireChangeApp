@@ -2,10 +2,10 @@ package ee.smit.clients;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import ee.smit.commons.enums.RequestType;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
+import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.ManchesterProperties;
@@ -33,20 +33,20 @@ public class ManchesterClient {
     ManchesterProperties manchesterProperties;
 
     public ManchesterResponse getAvailableTime(ManchesterRequest request) {
-        log.info("{} getAvailableTime Request: -> {}",this.getClass().getName() ,request);
+        log.info("getAvailableTime Request: -> {}", request);
 
         ManchesterResponse response = toJsonList(urlExecutor(AVAILABLE_TIME, request));
 
-        log.info("{} getAvailableTime Response: -> {}",this.getClass().getName() ,response);
+        log.info("getAvailableTime Response: -> {}", response);
         return response;
     }
 
     public ManchesterResponse bookTime(ManchesterRequest request) {
-        log.info("{} bookTime Request: -> {}",this.getClass().getName() ,request);
+        log.info("bookTime Request: -> {}", request);
 
         ManchesterResponse response = toJson(urlExecutor(BOOKING, request));
 
-        log.info("{} bookTime Response: -> {}",this.getClass().getName() ,response);
+        log.info("bookTime Response: -> {}", response);
         return response;
     }
 

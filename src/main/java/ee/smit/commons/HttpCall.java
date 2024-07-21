@@ -40,7 +40,7 @@ public class HttpCall {
     }
 
     private Response execute(Request request) {
-        log.info("Before execution Request () -> {}", request);
+        log.info("call execution Request () -> {}", request);
         try {
             return client.newCall(request).execute();
         } catch (IOException ignore) {

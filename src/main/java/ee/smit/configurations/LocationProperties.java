@@ -11,7 +11,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class Properties {
+public class LocationProperties {
     @Autowired
     LondonProperties londonProperties;
     @Autowired

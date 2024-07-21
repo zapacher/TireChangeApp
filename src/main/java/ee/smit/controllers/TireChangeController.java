@@ -2,20 +2,16 @@ package ee.smit.controllers;
 
 import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.VehicleTypes;
-import ee.smit.configurations.Properties;
+import ee.smit.configurations.LocationProperties;
 import ee.smit.controllers.api.AvailableTimeResponse;
 import ee.smit.controllers.api.Booking;
 import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -36,13 +32,13 @@ public class TireChangeController {
     @Autowired
     LondonService londonService;
     @Autowired
-    Properties properties;
+    LocationProperties locationProperties;
 
     @GetMapping("/availableLocations")
     HashMap<Locations, List<VehicleTypes>> getLocations() {
         log.info("getLocations Request");
 
-        HashMap<Locations, List<VehicleTypes>> response = properties.getAvailableLocations();
+        HashMap<Locations, List<VehicleTypes>> response = locationProperties.getAvailableLocations();
 
         log.info("getLocations Response: -> {}", response);
         return response;
@@ -59,13 +55,13 @@ public class TireChangeController {
         }
         response.setLocation(request);
 
-        log.info("{} getAvailableTime Response: -> {}", this.getClass().getName(), response);
+        log.info("getAvailableTime Response: -> {}", response);
         return response;
     }
 
     @PostMapping("/booking")
     Booking booking(@RequestBody Booking request) {
-        log.info("{} booking Request: -> {}", this.getClass().getName(), request);
+        log.info("booking Request: -> {}", request);
 
         Booking response = null;
 
@@ -74,7 +70,7 @@ public class TireChangeController {
             case MANCHESTER -> response = manchesterService.process(request, BOOKING);
         }
 
-        log.info("{} booking Response: -> {}", this.getClass().getName(), response);
+        log.info("booking Response: -> {}", response);
 
         return response;
     }

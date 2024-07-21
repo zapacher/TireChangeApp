@@ -48,7 +48,7 @@ public class LondonClient {
         log.info("bookTime Request: -> {}", request);
         /*
          !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
-          reRequest of available booking time before execution call.
+          repeat Request of available booking time before execution call.
          */
         checkAvailability(request);
         LondonResponse response = LondonResponse.builder()
