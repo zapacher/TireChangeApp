@@ -10,7 +10,7 @@ import java.util.List;
 
 @Data
 @Component
-@ConfigurationProperties(prefix = "environment.london")
+@ConfigurationProperties(prefix = "london")
 public class LondonProperties {
     String address;
     Api api;

@@ -1,26 +1,20 @@
-application:
-  name: ee.smit
-  type: app
+manchester:
+  available: true
+  vehicleTypes:
+    - CAR
+    - TRUCK
+  location: MANCHESTER
+  address: "14 Bury New Rd, Manchester"
+  api:
+    endpoint: "http://localhost:9004"
+    tirechangepath: "/api/v2/tire-change-times"
 
-environment:
-
-  manchester:
-    available: true
-    vehicleTypes:
-      - CAR
-      - TRUCK
-    location: MANCHESTER
-    address: "14 Bury New Rd, Manchester"
-    api:
-      endpoint: "http://localhost:9004"
-      tirechangepath: "/api/v2/tire-change-times"
-
-  london:
-    available: true
-    vehicleTypes:
-      - CAR
-    location: LONDON
-    address: "1A Gunton Rd, London"
-    api:
-      endpoint: "http://localhost:9003"
-      tirechangepath: "/api/v1/tire-change-times"
+london:
+  available: true
+  vehicleTypes:
+    - CAR
+  location: LONDON
+  address: "1A Gunton Rd, London"
+  api:
+    endpoint: "http://localhost:9003"
+    tirechangepath: "/api/v1/tire-change-times"
