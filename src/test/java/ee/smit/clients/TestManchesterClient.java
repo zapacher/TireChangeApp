@@ -7,6 +7,7 @@ import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @EnableConfigurationProperties(ManchesterProperties.class)
 @SpringBootTest(classes = ManchesterClient.class)
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
@@ -21,6 +23,8 @@ public class TestManchesterClient {
 
     @Autowired
     ManchesterClient manchesterClient;
+    @Mock
+    HttpCall httpCall;
 
     ManchesterResponse manchesterResponse;
 

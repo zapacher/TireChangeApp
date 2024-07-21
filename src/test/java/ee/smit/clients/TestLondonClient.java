@@ -5,9 +5,11 @@ import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.LondonProperties;
+import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
@@ -16,6 +18,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@EnableConfigurationProperties(LondonProperties.class)
 @SpringBootTest(classes = LondonClient.class)
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
 public class TestLondonClient {
@@ -101,5 +104,4 @@ public class TestLondonClient {
                             .build());
         } catch (BadRequestException ignore) {}
     }
-
 }
