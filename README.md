@@ -13,7 +13,7 @@ when everything is ready:
 docker-compose up --build 
 ```
 
-frontend is reachable trough browser by link: 
+frontend is reachable trough browser by link when run by docker: 
 http://localhost:9005/ 
 
 WARNING
