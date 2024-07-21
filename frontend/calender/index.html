@@ -28,6 +28,7 @@
             display: none;
         }
         #textInput {
+            resize: none;
             margin-top: 10px;
             margin-bottom: 12px;
             width: 100%;         /* Full width of the container */
@@ -42,23 +43,14 @@
         .checkbox-container {
             margin-bottom: 10px;
         }
-        #time-selector-container {
-            width: 200px; /* Width of the time selector */
-            height: 300px; /* Height of the container */
-            overflow-y: auto; /* Enable vertical scrolling */
-            border: 1px solid #ccc; /* Optional: border for the container */
-            padding: 10px; /* Optional: padding inside the container */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for the container */
-        }
 
         #time-selector-container {
-    width: 200px; /* Width of the time selector */
-    height: 90px; /* Height to fit 3 time options */
+            width: 200px; /* Width of the time selector */
+    
     overflow-y: auto; /* Enable vertical scrolling if needed */
-    border: 1px solid #ccc; /* Optional: border for the container */
     padding: 5px; /* Optional: padding inside the container */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: shadow for the container */
     position: relative; /* Ensure proper positioning of scrollbar */
+    display: hide;
 }
 
 #time-selector {

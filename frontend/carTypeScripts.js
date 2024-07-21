@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-
+    let finalReserveCheck = null;
     let locationVehicleMap = new Map();
     let allAvailableByLocation = new Map();
 
@@ -56,15 +56,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById(locationLow).style.display = 'none';
             const calendarDiv = document.createElement('div');
             calendarDiv.id = 'calendar-'+location;
-            locationDiv.appendChild(calendarDiv)
-
-            const bookingDetailsDiv = document.createElement('div');
-            bookingDetailsDiv.className = 'booking-details-'+locationLow;
-            locationDiv.appendChild(bookingDetailsDiv);
+            locationDiv.appendChild(calendarDiv);
 
             const timeSelectorContainerDiv = document.createElement('div');
             timeSelectorContainerDiv.id = 'time-selector-container-'+locationLow;
             locationDiv.appendChild(timeSelectorContainerDiv);
+
+            const bookingDetailsDiv = document.createElement('div');
+            bookingDetailsDiv.className = 'booking-details-'+locationLow;
+            locationDiv.appendChild(bookingDetailsDiv);
 
             const timeSelectorDiv = document.createElement('div');
             timeSelectorDiv.id = 'time-selector-'+locationLow;
@@ -90,9 +90,10 @@ document.addEventListener('DOMContentLoaded', () => {
             checkboxContainerDiv.appendChild(checkboxLabel);
             
             const reserveButton = document.createElement('button');
-            reserveButton.id = 'button' + locationLow;
+            reserveButton.id = 'button-' + locationLow;
             reserveButton.textContent = 'Reserve';
-
+            locationDiv.appendChild(reserveButton);
+            
             reserveButton.addEventListener('click', function() {
                 const checkbox = document.getElementById('confirmCheckbox-'+locationLow);
                 if(!checkbox.checked) {
@@ -115,28 +116,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 const fullDate = date+'T'+time+':00Z';
         
-                console.log(fullDate);
-        
-                console.log(allAvailableByLocation.get(locationLow));
-        
                 const id = getKeyByValue(allAvailableByLocation.get(locationLow), fullDate);
         
-                console.log('ID : '  + id);
-
                 if(id==null) {
                     window.alert("Please contact support");
                 }
                 
+                finalReserveCheck = id;
                 booking(id, location, info);
 
-                // window.alert('Reserved at ' + date + ' at ' + fullDate);
-                // window.location.reload();
+                window.alert('Reserved on ' + date + ' at ' + time + ' Have a Nice day! :)');
+                window.location.reload();
             });
-
-            locationDiv.appendChild(reserveButton);
-
-
-
         });
         
         locations.forEach(location => {
@@ -233,9 +224,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
                 throw new Error('Network response was not ok ' + response.statusText);
             }
+            return response.json();
         })
         .then(data => {
-            console.log('BOOKING -> ' + data)
+            if(!data.booked) {
+                window.alert("Something went wrong, pleas try again or contact support")
+            }
         })
         .catch((error) => {
             console.error('Error with POST request:', error);
@@ -252,10 +246,15 @@ document.addEventListener('DOMContentLoaded', () => {
             div.className = 'time-option';
             div.dataset.time = time;
             div.addEventListener('click', () => {
-                document.querySelectorAll('.time-option').forEach(option => {
+                document.querySelectorAll('time-option').forEach(option => {
                     option.classList.remove('selected-'+location);
+                    
                 });
                 div.classList.add('selected-'+location);
+                document.getElementById('info-input-'+location).style.display = 'block';
+                // document.getElementById('checkbox-container-'+location).style.display = 'grid';
+                document.getElementsByClassName('checkbox-container-'+location)[0].style.display = 'block';
+                document.getElementById('button-'+location).style.display = 'grid';
             });
             timeSelector.appendChild(div);
         });
