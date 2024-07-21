@@ -70,7 +70,7 @@ public class LondonClient {
                         buildBookingBodyXML(londonRequest.getBookingInfo()));
             }
             log.info("full response -> {}", response);
-            if(response.code()==200) {
+            if(response.isSuccessful()) {
                 return response.body().string();
             } else {
                 switch(response.code()) {

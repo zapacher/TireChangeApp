@@ -1,5 +1,6 @@
 package ee.smit.commons;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -10,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
-
+@Slf4j
 @Component
 public class HttpCall {
 
@@ -39,6 +40,7 @@ public class HttpCall {
     }
 
     private Response execute(Request request) {
+        log.info("Before execution Request () -> {}", request);
         try {
             return client.newCall(request).execute();
         } catch (IOException ignore) {

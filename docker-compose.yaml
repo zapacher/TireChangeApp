@@ -7,11 +7,29 @@ services:
       dockerfile: Dockerfile
     environment:
       - SPRING_CONFIG_LOCATION=file:/config/application.yml
+      - MANCHESTER_API_ENDPOINT = http://172.17.0.1:9004
+      - LONDON_API_ENDPOINT = http://172.17.0.1:9003
     ports:
       - "9006:8080"
+    networks:
+      - tire_change_network
+
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
     ports:
       - "9005:80"
+    depends_on:
+      - "backend"
+    networks:
+      - tire_change_network
+
+
+networks:
+  tire_change_network:
+    name: tire_change_network
+    ipam:
+      config:
+        - subnet: 172.33.0.0/16
+          gateway: 172.33.0.1
