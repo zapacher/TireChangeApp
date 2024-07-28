@@ -7,12 +7,15 @@ import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.ManchesterProperties;
-import ee.smit.controllers.api.AvailableTimeResponse;
+import ee.smit.controllers.api.AvailableTime;
 import ee.smit.controllers.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -23,34 +26,42 @@ public class ManchesterService {
     @Autowired
     ManchesterClient manchesterClient;
 
-    public <T> T process(Booking request, RequestType requestType) {
+    public <T> T process(T request, RequestType requestType) {
         isLocationAvailable();
 
         switch(requestType) {
             case AVAILABLE_TIME -> {
-                return (T) getAvailableTime();
+                return (T) getAvailableTime((AvailableTime) request);
             }
             case BOOKING -> {
-                return (T) booking(request);
+                return (T) booking((Booking) request);
             }
             default -> throw new InternalServerErrorException();
         }
     }
 
-    private AvailableTimeResponse getAvailableTime() {
+    private AvailableTime getAvailableTime(AvailableTime request) {
+        final LocalDate userCurrentDate = Instant.parse(request.getUserTime()).atZone(ZoneId.of("UTC")).toLocalDate();
+
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(
                 ManchesterRequest.builder()
-                        .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .from(userCurrentDate)
                         .build()
         );
 
-        AvailableTimeResponse response = new AvailableTimeResponse();
+        AvailableTime response = new AvailableTime();
         response.setVehicleTypes(manchesterProperties.getVehicleTypes());
 
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
-            response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(availableTime.getId(), availableTime.getTime()));
+            if(ZonedDateTime.parse(availableTime.getTime()).isAfter(ZonedDateTime.parse(request.getUserTime()))) {
+                response.getAvailableTimeList().add(
+                        new AvailableTime.AvailableTimeList(String.valueOf(availableTime.getId()), availableTime.getTime())
+                );
+            }
         }
+
         response.setAddress(manchesterProperties.getAddress());
+        response.setLocation(manchesterProperties.getLocation());
         return response;
     }
 

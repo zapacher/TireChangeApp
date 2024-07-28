@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
@@ -46,11 +47,7 @@ public class LondonClient {
 
     public LondonResponse bookTime(LondonRequest request) {
         log.info("bookTime Request: -> {}", request);
-        /*
-         !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
-          repeat Request of available booking time before execution call.
-         */
-        checkAvailability(request);
+
         LondonResponse response = LondonResponse.builder()
                 .tireChangeBookingResponse(fromXml(TireChangeBookingResponse.class, BOOKING, request))
                 .build();
@@ -81,19 +78,6 @@ public class LondonClient {
             }
         } catch (IOException ignore) {
             throw new InternalServerErrorException();
-        }
-    }
-
-    private void checkAvailability(LondonRequest londonRequest) {
-        LondonResponse londonResponse = getAvailableTime(LondonRequest.builder()
-                .from("2006-01-02")
-                .until("2030-01-02")
-                .build());
-
-        if(londonResponse.getTireChangeTimesResponse().getAvailableTime()
-                .stream()
-                .noneMatch(availableTime -> availableTime.getUuid().equals(londonRequest.getUuid()))) {
-            throw new BadRequestException(422, "This time is already booked");
         }
     }
 

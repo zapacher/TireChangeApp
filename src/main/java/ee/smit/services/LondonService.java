@@ -8,13 +8,15 @@ import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.LondonProperties;
-import ee.smit.controllers.api.AvailableTimeResponse;
+import ee.smit.controllers.api.AvailableTime;
 import ee.smit.controllers.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.UUID;
 
 @Service
@@ -32,7 +34,7 @@ public class LondonService {
 
         switch(requestType) {
             case AVAILABLE_TIME -> {
-                return (T) getAvailableTime();
+                return (T) getAvailableTime((AvailableTime) request);
             }
             case BOOKING -> {
                 return (T) booking((Booking) request);
@@ -41,27 +43,40 @@ public class LondonService {
         }
     }
 
-    private AvailableTimeResponse getAvailableTime() {
+    private AvailableTime getAvailableTime(AvailableTime request) {
+        final LocalDate userCurrentDate = Instant.parse(request.getUserTime()).atZone(ZoneId.of("UTC")).toLocalDate();
+
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
-                        .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                        .until(LocalDate.now().plusMonths(MONTHS_RANGE).format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .from(userCurrentDate)
+                        .until(userCurrentDate.plusMonths(MONTHS_RANGE))
                         .build()
         );
 
-        AvailableTimeResponse response = new AvailableTimeResponse();
+        AvailableTime response = new AvailableTime();
         response.getVehicleTypes().addAll(londonProperties.getVehicleTypes());
 
         for(TireChangeTimesResponse.AvailableTime availableTime: londonResponse.getTireChangeTimesResponse().getAvailableTime()) {
-            response.getAvailableTimeList().add(
-                    new AvailableTimeResponse.AvailableTime(String.valueOf(availableTime.getUuid()),availableTime.getTime())
-            );
+            if(ZonedDateTime.parse(availableTime.getTime()).isAfter(ZonedDateTime.parse(request.getUserTime()))) {
+                response.getAvailableTimeList().add(
+                        new AvailableTime.AvailableTimeList(String.valueOf(availableTime.getUuid()), availableTime.getTime())
+                );
+            }
         }
+
         response.setAddress(londonProperties.getAddress());
+        response.setLocation(londonProperties.getLocation());
+
         return response;
     }
 
     private Booking booking(Booking request) {
+        /*
+         !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
+          repeat Request of available booking time before execution call.
+         */
+        checkAvailability(request);
+
         LondonResponse londonResponse = londonClient.bookTime(LondonRequest.builder()
                 .uuid(UUID.fromString(request.getId()))
                 .bookingInfo(request.getInfo())
@@ -71,6 +86,18 @@ public class LondonService {
                 .bookingTime(londonResponse.getTireChangeBookingResponse().getTime())
                 .isBooked(true)
                 .build();
+    }
+
+    private void checkAvailability(Booking request) {
+        AvailableTime requestForCheck = new AvailableTime();
+        requestForCheck.setUserTime(request.getUserTime());
+        AvailableTime response = getAvailableTime(requestForCheck);
+
+        if(response.getAvailableTimeList()
+                .stream()
+                .noneMatch(availableTime -> availableTime.getId().equals(request.getId()))) {
+            throw new BadRequestException(422, "This time is already booked");
+        }
     }
 
     private void isLocationAvailable() {
