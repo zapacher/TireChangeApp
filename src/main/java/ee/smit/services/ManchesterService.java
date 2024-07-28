@@ -12,7 +12,10 @@ import ee.smit.controllers.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Service
@@ -23,24 +26,26 @@ public class ManchesterService {
     @Autowired
     ManchesterClient manchesterClient;
 
-    public <T> T process(Booking request, RequestType requestType) {
+    public <T> T process(T request, RequestType requestType) {
         isLocationAvailable();
 
         switch(requestType) {
             case AVAILABLE_TIME -> {
-                return (T) getAvailableTime();
+                return (T) getAvailableTime((AvailableTime) request);
             }
             case BOOKING -> {
-                return (T) booking(request);
+                return (T) booking((Booking) request);
             }
             default -> throw new InternalServerErrorException();
         }
     }
 
-    private AvailableTime getAvailableTime() {
+    private AvailableTime getAvailableTime(AvailableTime request) {
+        final LocalDate userCurrentDate = Instant.parse(request.getUserTime()).atZone(ZoneId.of("UTC")).toLocalDate();
+
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(
                 ManchesterRequest.builder()
-                        .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+                        .from(userCurrentDate)
                         .build()
         );
 
@@ -48,7 +53,11 @@ public class ManchesterService {
         response.setVehicleTypes(manchesterProperties.getVehicleTypes());
 
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
-            response.getAvailableTimeList().add(new AvailableTime.AvailableTimeList(availableTime.getId(), availableTime.getTime()));
+            if(ZonedDateTime.parse(availableTime.getTime()).isAfter(ZonedDateTime.parse(request.getUserTime()))) {
+                response.getAvailableTimeList().add(
+                        new AvailableTime.AvailableTimeList(String.valueOf(availableTime.getId()), availableTime.getTime())
+                );
+            }
         }
 
         response.setAddress(manchesterProperties.getAddress());

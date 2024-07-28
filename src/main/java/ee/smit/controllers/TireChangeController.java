@@ -53,7 +53,7 @@ public class TireChangeController {
 
         switch(request.getLocation()) {
             case LONDON -> response = londonService.process(request, AVAILABLE_TIME);
-            case MANCHESTER -> response = manchesterService.process(null, AVAILABLE_TIME);
+            case MANCHESTER -> response = manchesterService.process(request, AVAILABLE_TIME);
         }
 
         log.info("getAvailableTime Response: -> {}", response);
