@@ -210,6 +210,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 dateFormat: "Y-m-d", 
                 defaultHour: 12, 
                 weekNumbers: true,
+                locale: {
+                    firstDayOfWeek: 1
+                },
                 onChange: function(selectedDates, dateStr, instance) {
                     dateSelected = dateStr;
                     timePicker(parseDate(availableTimesMap, dateStr).get(dateStr), location.toLowerCase());
@@ -225,6 +228,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let jsonRequest = JSON.stringify({
             id: id,
             location: location.toUpperCase(),
+            userTime: getCurrentLocalTimeISO(),
             info: info
         });
 

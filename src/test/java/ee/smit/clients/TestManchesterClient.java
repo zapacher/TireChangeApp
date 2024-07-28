@@ -31,7 +31,7 @@ public class TestManchesterClient {
     @Test
     void test_ManchesterRequestAvailableTime() {
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(ManchesterRequest.builder()
-                .from("2006-01-02")
+//                .from("2006-01-02")
                 .build());
 
         assertAll(
