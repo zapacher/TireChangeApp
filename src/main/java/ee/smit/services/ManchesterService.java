@@ -7,7 +7,7 @@ import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.ManchesterProperties;
-import ee.smit.controllers.api.AvailableTimeResponse;
+import ee.smit.controllers.api.AvailableTime;
 import ee.smit.controllers.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,20 +37,22 @@ public class ManchesterService {
         }
     }
 
-    private AvailableTimeResponse getAvailableTime() {
+    private AvailableTime getAvailableTime() {
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(
                 ManchesterRequest.builder()
                         .from(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
                         .build()
         );
 
-        AvailableTimeResponse response = new AvailableTimeResponse();
+        AvailableTime response = new AvailableTime();
         response.setVehicleTypes(manchesterProperties.getVehicleTypes());
 
         for(ManchesterResponse.AvailableTime availableTime: manchesterResponse.getAvailableTimes()) {
-            response.getAvailableTimeList().add(new AvailableTimeResponse.AvailableTime(availableTime.getId(), availableTime.getTime()));
+            response.getAvailableTimeList().add(new AvailableTime.AvailableTimeList(availableTime.getId(), availableTime.getTime()));
         }
+
         response.setAddress(manchesterProperties.getAddress());
+        response.setLocation(manchesterProperties.getLocation());
         return response;
     }
 

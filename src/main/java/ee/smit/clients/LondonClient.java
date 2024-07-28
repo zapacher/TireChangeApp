@@ -19,6 +19,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
@@ -86,8 +87,8 @@ public class LondonClient {
 
     private void checkAvailability(LondonRequest londonRequest) {
         LondonResponse londonResponse = getAvailableTime(LondonRequest.builder()
-                .from("2006-01-02")
-                .until("2030-01-02")
+                .from(LocalDate.now().atStartOfDay().toLocalDate())
+                .until(LocalDate.now().atStartOfDay().toLocalDate().plusMonths(6))
                 .build());
 
         if(londonResponse.getTireChangeTimesResponse().getAvailableTime()

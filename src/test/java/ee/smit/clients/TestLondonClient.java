@@ -7,6 +7,7 @@ import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.LondonProperties;
 import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -32,8 +33,8 @@ public class TestLondonClient {
     void test_LondonRequestAvailableTime() {
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
-                        .from("2006-01-02")
-                        .until("2030-01-02")
+//                        .from("2006-01-02")
+//                        .until("2030-01-02")
                         .build());
 
         assertAll(

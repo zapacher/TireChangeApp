@@ -3,13 +3,15 @@ package ee.smit.controllers;
 import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.VehicleTypes;
 import ee.smit.configurations.LocationProperties;
-import ee.smit.controllers.api.AvailableTimeResponse;
+import ee.smit.controllers.api.AvailableTime;
 import ee.smit.controllers.api.Booking;
+import ee.smit.controllers.api.groups.Request;
 import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -35,7 +37,7 @@ public class TireChangeController {
     LocationProperties locationProperties;
 
     @GetMapping("/availableLocations")
-    HashMap<Locations, List<VehicleTypes>> getLocations() {
+    public HashMap<Locations, List<VehicleTypes>> getLocations() {
         log.info("getLocations Request");
 
         HashMap<Locations, List<VehicleTypes>> response = locationProperties.getAvailableLocations();
@@ -45,22 +47,21 @@ public class TireChangeController {
     }
 
     @PostMapping("/getAvailableTime")
-    AvailableTimeResponse getAvailableTime(@RequestBody Locations request) {
-        AvailableTimeResponse response = null;
+    public AvailableTime getAvailableTime(@Validated (Request.class) @RequestBody AvailableTime request) {
+        AvailableTime response = null;
         log.info("getAvailableTime Request: -> {}", request);
 
-        switch(request) {
-            case LONDON -> response = londonService.process(null, AVAILABLE_TIME);
+        switch(request.getLocation()) {
+            case LONDON -> response = londonService.process(request, AVAILABLE_TIME);
             case MANCHESTER -> response = manchesterService.process(null, AVAILABLE_TIME);
         }
-        response.setLocation(request);
 
         log.info("getAvailableTime Response: -> {}", response);
         return response;
     }
 
     @PostMapping("/booking")
-    Booking booking(@RequestBody Booking request) {
+    public Booking booking(@Validated (Request.class) @RequestBody Booking request) {
         log.info("booking Request: -> {}", request);
 
         Booking response = null;
@@ -71,8 +72,6 @@ public class TireChangeController {
         }
 
         log.info("booking Response: -> {}", response);
-
         return response;
     }
-
 }

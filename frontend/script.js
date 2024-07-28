@@ -165,13 +165,18 @@ document.addEventListener('DOMContentLoaded', () => {
         allAvailableByLocation.clear();
         let element = document.getElementById(location.toLowerCase());
 
+        let jsonRequest = JSON.stringify({
+            location: location,
+            userTime: getCurrentLocalTimeISO()
+        });
+
         let response;
         fetch('http://172.33.0.1:9006/tire_change/getAvailableTime', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: '"'+location+'"'
+            body: jsonRequest 
         })
         .then(response => {
             if (!response.ok) {
@@ -217,13 +222,18 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function booking(id, location, info) {
-        const element = document.getElementById(location);
+        let jsonRequest = JSON.stringify({
+            id: id,
+            location: location.toUpperCase(),
+            info: info
+        });
+
         fetch('http://172.33.0.1:9006/tire_change/booking', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: '{"id": "'+id+'","location": "'+location.toUpperCase()+'","info": "'+info+'"}'
+            body: jsonRequest
         })
         .then(response => {
             if (!response.ok) {
@@ -313,6 +323,23 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         return null;
+    }
+
+    function getCurrentLocalTimeISO() {
+        let date = new Date();
+
+        // Extract the date and time components
+        let year = date.getFullYear();
+        let month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+        let day = String(date.getDate()).padStart(2, '0');
+        let hours = String(date.getHours()).padStart(2, '0');
+        let minutes = String(date.getMinutes()).padStart(2, '0');
+        let seconds = String(date.getSeconds()).padStart(2, '0');
+        let milliseconds = String(date.getMilliseconds()).padStart(3, '0');
+    
+        // Construct ISO 8601 string, maintaining the original local time
+        let localISOTime = `${year}-${month}-${day}T${hours}:${minutes}:${seconds}.${milliseconds}Z`;
+        return localISOTime;
     }
 
 });
