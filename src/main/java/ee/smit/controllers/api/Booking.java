@@ -30,5 +30,8 @@ public class Booking {
     @NotNull(groups = {Request.class})
     Locations location;
 
+    @NotNull(groups = {Request.class})
+    String userTime;
+
     boolean isBooked;
 }

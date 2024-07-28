@@ -47,11 +47,7 @@ public class LondonClient {
 
     public LondonResponse bookTime(LondonRequest request) {
         log.info("bookTime Request: -> {}", request);
-        /*
-         !!WARNING!! if info for uuid is equal as the booked one, it will be successfully booked. For that,
-          repeat Request of available booking time before execution call.
-         */
-        checkAvailability(request);
+
         LondonResponse response = LondonResponse.builder()
                 .tireChangeBookingResponse(fromXml(TireChangeBookingResponse.class, BOOKING, request))
                 .build();
@@ -82,19 +78,6 @@ public class LondonClient {
             }
         } catch (IOException ignore) {
             throw new InternalServerErrorException();
-        }
-    }
-
-    private void checkAvailability(LondonRequest londonRequest) {
-        LondonResponse londonResponse = getAvailableTime(LondonRequest.builder()
-                .from(LocalDate.now().atStartOfDay().toLocalDate())
-                .until(LocalDate.now().atStartOfDay().toLocalDate().plusMonths(6))
-                .build());
-
-        if(londonResponse.getTireChangeTimesResponse().getAvailableTime()
-                .stream()
-                .noneMatch(availableTime -> availableTime.getUuid().equals(londonRequest.getUuid()))) {
-            throw new BadRequestException(422, "This time is already booked");
         }
     }
 
