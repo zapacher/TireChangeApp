@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const allAvailableByLocation = new Map();
     let dateSelected = new Map();
     let timeSelected = new Map();
+    const availableBooking = new Map();
+    let vehicleTypes = [];
 
     function getAvailableLocations() {
         fetch('http://172.33.0.1:9006/tire_change/availableLocations', {
@@ -22,6 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .then(data => {
             locationVehicleMap = new Map(Object.entries(data));
+            locationVehicleMap.forEach(vehicle => {
+                vehicle.forEach(vehicleType => {
+                    if(!vehicleTypes.includes(vehicleType)) {
+                        vehicleTypes.push(vehicleType);
+                    }
+                })
+            });
+            createButtons();
         })
         .catch((error) => {
             console.error('Error with GET request:', error);
@@ -37,8 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         div.id = location;
         return div;
     }
-
-    const availableBooking = new Map();
 
     function processBookintAvailability(locations) {
         timeSelected.clear();
@@ -80,6 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
             bookingDetailsDiv.appendChild(textAreaInfo);
 
             const checkboxContainerDiv = document.createElement('div');
+            checkboxContainerDiv.id = 'checkbox-container-'+locationLow;
             checkboxContainerDiv.className = 'checkbox-container-'+locationLow;
             bookingDetailsDiv.appendChild(checkboxContainerDiv);
 
@@ -154,7 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function getLocationsForVehicle(vehicleType) {
         let locations = [];
-
         locationVehicleMap.forEach((vehicleTypes, location) => {
             if (vehicleTypes.includes(vehicleType)) {
                 locations.push(location);
@@ -162,6 +170,30 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         return locations;
+    }
+
+    function createButtons() {
+        const h1 = document.createElement('h1');
+        h1.innerText = 'Please choose youre vehicle type';
+
+        const buttonsDiv = document.createElement('div');
+        buttonsDiv.className = 'buttons';
+
+        vehicleTypes.forEach(vehicleType => {
+            const button = document.createElement('button');
+            button.id = vehicleType.toLowerCase + '-selector';
+            button.innerText = vehicleType.toLowerCase();
+
+            button.addEventListener('click', () => {
+                const locations = getLocationsForVehicle(vehicleType);
+                processBookintAvailability(locations);
+            });
+
+            buttonsDiv.appendChild(button);
+        });
+
+        document.body.insertBefore(buttonsDiv, document.getElementById('container'));
+        document.body.insertBefore(h1, buttonsDiv)
     }
 
     function getAvailableBooking(location) {
@@ -264,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function timePicker(times, location) {
-        const timeSelector = document.getElementById('time-selector-'+location);
+        const timeSelector = document.getElementById('time-selector-' + location);
         timeSelector.innerHTML = '';
 
         times.forEach(time => {
@@ -277,26 +309,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     option.style.backgroundColor = 'white'
                     timeSelected.set(location, div.dataset.time);
                 });
-                div.style.backgroundColor = '#d0d0d0'
+                
+                document.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                    if(checkbox) {
+                        checkbox.checked = false;
+                    }
+                })
+                
+                document.querySelectorAll('*[id*="button-"]').forEach(button => {
+                    document.getElementById(button.id).style.display = 'none';
+                })
+
+                document.querySelectorAll('*[id*="checkbox-container-"]').forEach(checkboxDiv => {
+                    document.getElementById(checkboxDiv.id).style.display = 'none';
+                })
+
+                document.querySelectorAll('*[id*="info-input-"]').forEach(input => {
+                    document.getElementById(input.id).style.display = 'none';
+                })
+                
+
                 document.getElementById('info-input-'+location).style.display = 'block';
-                document.getElementsByClassName('checkbox-container-'+location)[0].style.display = 'block';
+                document.getElementById('checkbox-container-'+location).style.display = 'block'
+                div.style.backgroundColor = '#d0d0d0'
             });
             timeSelector.appendChild(div);
         });
     }
-
-    const carSelector = document.getElementById('carSelector');
-    const truckSelector = document.getElementById('truckSelector');
-
-    carSelector.addEventListener('click', () => {
-        const locations = getLocationsForVehicle('CAR');
-        processBookintAvailability(locations);
-    });
-
-    truckSelector.addEventListener('click', () => {
-        const locations = getLocationsForVehicle('TRUCK');
-        processBookintAvailability(locations);
-    }); 
 
     function parseDate(dateList) {
         const dateTimeMap = new Map();
