@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     let locationVehicleMap = new Map();
     const allAvailableByLocation = new Map();
-    let timeSelected = null;
+    let dateSelected = new Map();
+    let timeSelected = new Map();
 
     function getAvailableLocations() {
         fetch('http://172.33.0.1:9006/tire_change/availableLocations', {
@@ -40,13 +41,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const availableBooking = new Map();
 
     function processBookintAvailability(locations) {
+        timeSelected.clear();
+        dateSelected.clear();
         availableBooking.clear();
         document.getElementById('container').innerHTML = '';
 
         locations.forEach(location => {
             const locationLow = location.toLowerCase();
             const locationDiv = createLocationDiv(locationLow);
-            
+            timeSelected.set(locationLow, null);
+            dateSelected.set(locationLow, null);
+
             const infoDiv = document.createElement('div');
             infoDiv.id = 'info-'+locationLow;
             locationDiv.appendChild(infoDiv);
@@ -116,8 +121,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
 
-                const time = timeSelected;
-                const date = dateSelected;
+                const time = timeSelected.get(locationLow);
+                const date = dateSelected.get(locationLow);
                 
                 if(time=="" || date==null) {
                     window.alert("Please select correct time before reserving");
@@ -158,8 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         return locations;
     }
-
-    let dateSelected;
 
     function getAvailableBooking(location) {
         allAvailableByLocation.clear();
@@ -214,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     firstDayOfWeek: 1
                 },
                 onChange: function(selectedDates, dateStr, instance) {
-                    dateSelected = dateStr;
+                    dateSelected.set(location.toLowerCase(), dateStr);
                     timePicker(parseDate(availableTimesMap, dateStr).get(dateStr), location.toLowerCase());
                 }
             });
@@ -272,7 +275,7 @@ document.addEventListener('DOMContentLoaded', () => {
             div.addEventListener('click', () => {
                 document.querySelectorAll('.time-option').forEach(option => {
                     option.style.backgroundColor = 'white'
-                    timeSelected = div.dataset.time;
+                    timeSelected.set(location, div.dataset.time);
                 });
                 div.style.backgroundColor = '#d0d0d0'
                 document.getElementById('info-input-'+location).style.display = 'block';
