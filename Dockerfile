@@ -2,13 +2,13 @@ FROM maven:3.8.4-openjdk-17 AS build
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
-RUN mvn clean package -DskipTests
+RUN mvn clean package
 
 FROM openjdk:17-jdk-alpine
 WORKDIR /app
 
 COPY --from=build /app/target/tire_change-1.0.jar backend.jar
-COPY src/resources/application.yml /config/application.yml
+COPY src/main/resources/application.yml /config/application.yml
 
 EXPOSE 8080
 

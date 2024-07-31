@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     environment:
-      - SPRING_CONFIG_LOCATION=file:/config/application.yml
+      - SPRING_CONFIG_LOCATION = file:/config/application.yml
       - MANCHESTER_API_ENDPOINT = http://172.17.0.1:9004
       - LONDON_API_ENDPOINT = http://172.17.0.1:9003
     ports:

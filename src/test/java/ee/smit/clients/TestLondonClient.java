@@ -5,9 +5,7 @@ import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.LondonProperties;
-import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -15,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,15 +25,24 @@ public class TestLondonClient {
 
     @Autowired
     LondonClient londonClient;
+    @Autowired
+    LondonProperties londonProperties;
 
     LondonResponse londonResponse;
 
+    void dockerTestEnv() {
+        if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
+            londonProperties.getApi().setEndpoint("http://172.17.0.1:9003");
+        }
+    }
+
     @Test
     void test_LondonRequestAvailableTime() {
+        dockerTestEnv();
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
-//                        .from("2006-01-02")
-//                        .until("2030-01-02")
+                        .from(LocalDate.now())
+                        .until(LocalDate.now().plusMonths(5))
                         .build());
 
         assertAll(
@@ -70,12 +78,11 @@ public class TestLondonClient {
 
         UUID londonBookingTestUuid = londonResponse.getTireChangeTimesResponse().getAvailableTime().get(0).getUuid();
         String info = "TEST_INFO";
-        dummyCallLondon(londonBookingTestUuid, info);
+        dummyBookLondon(londonBookingTestUuid, info);
         assertAll(
                 () -> assertThrows(BadRequestException.class,
                         () -> londonClient.bookTime(
                                 LondonRequest.builder()
-                                        .uuid(londonBookingTestUuid)
                                         .bookingInfo(info)
                                         .build())
                 ),
@@ -83,20 +90,12 @@ public class TestLondonClient {
                         () -> londonClient.bookTime(
                                 LondonRequest.builder()
                                         .uuid(londonBookingTestUuid)
-                                        .bookingInfo(info+1)
-                                        .build())
-                ),
-                () -> assertThrows(BadRequestException.class,
-                        () -> londonClient.bookTime(
-                                LondonRequest.builder()
-                                        .uuid(UUID.randomUUID())
-                                        .bookingInfo("null")
                                         .build())
                 )
         );
     }
 
-    private void dummyCallLondon(UUID id, String info) {
+    private void dummyBookLondon(UUID id, String info) {
         try {
             londonClient.bookTime(
                     LondonRequest.builder()

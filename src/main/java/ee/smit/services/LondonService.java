@@ -8,8 +8,8 @@ import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.commons.errors.InternalServerErrorException;
 import ee.smit.configurations.LondonProperties;
-import ee.smit.controllers.api.AvailableTime;
-import ee.smit.controllers.api.Booking;
+import ee.smit.controller.api.AvailableTime;
+import ee.smit.controller.api.Booking;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

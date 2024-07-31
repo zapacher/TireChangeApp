@@ -1,9 +1,9 @@
-package ee.smit.controllers.api;
+package ee.smit.controller.api;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ee.smit.commons.enums.Locations;
-import ee.smit.controllers.api.groups.Request;
-import ee.smit.controllers.api.groups.Response;
+import ee.smit.controller.api.groups.Request;
+import ee.smit.controller.api.groups.Response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package ee.smit.controllers.api;
+package ee.smit.controller.api;
 
 import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.VehicleTypes;
@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AvailableLocationsResponse {
-    HashMap<Locations, List<VehicleTypes>> availableLocationsResponse = new HashMap<>();
+    HashMap<Locations, List<VehicleTypes>> availableLocations = new HashMap<>();
 }
