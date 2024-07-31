@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return response.json();
         })
         .then(data => {
-            locationVehicleMap = new Map(Object.entries(data));
+            locationVehicleMap = new Map(Object.entries(data.availableLocations));
             locationVehicleMap.forEach(vehicle => {
                 vehicle.forEach(vehicleType => {
                     if(!vehicleTypes.includes(vehicleType)) {

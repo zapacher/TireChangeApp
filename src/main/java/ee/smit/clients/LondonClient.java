@@ -19,11 +19,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.LocalDate;
 import java.util.Objects;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
+
 @Slf4j
 @Service
 public class LondonClient {
@@ -56,31 +56,6 @@ public class LondonClient {
         return response;
     }
 
-    private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
-        String URL = londonProperties.getApi().getEndpoint() + londonProperties.getApi().getTirechangepath();
-        Response response = null;
-        try {
-            switch (requestType) {
-                case AVAILABLE_TIME -> response = httpCall.get(URL + "/available?from=" + londonRequest.getFrom()
-                        + "&until=" + londonRequest.getUntil());
-                case BOOKING -> response = httpCall.put(URL + "/" + londonRequest.getUuid()+"/booking",
-                        buildBookingBodyXML(londonRequest.getBookingInfo()));
-            }
-            log.info("full response -> {}", response);
-            if(response.isSuccessful()) {
-                return response.body().string();
-            } else {
-                switch(response.code()) {
-                    case 400 -> throw new BadRequestException(400, "Bad Request");
-                    case 422 -> throw new BadRequestException(422, "This time is already booked");
-                    default -> throw new InternalServerErrorException();
-                }
-            }
-        } catch (IOException ignore) {
-            throw new InternalServerErrorException();
-        }
-    }
-
     public <T> T fromXml(Class<T> responseClass, RequestType requestType, LondonRequest londonRequest) {
 
         String urlResponse = urlExecutor(requestType, londonRequest);
@@ -94,6 +69,30 @@ public class LondonClient {
             return (T) unmarshaller.unmarshal(new StringReader(urlResponse));
         } catch (JAXBException ex) {
             throw new InternalServerErrorException(500, ex.getMessage());
+        }
+    }
+
+    private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
+        String URL = londonProperties.getApi().getEndpoint() + londonProperties.getApi().getTirechangepath();
+        Response response = null;
+        try {
+            switch (requestType) {
+                case AVAILABLE_TIME -> response = httpCall.get(URL + "/available?from=" + londonRequest.getFrom()
+                        + "&until=" + londonRequest.getUntil());
+                case BOOKING -> response = httpCall.put(URL + "/" + londonRequest.getUuid()+"/booking",
+                        buildBookingBodyXML(londonRequest.getBookingInfo()));
+            }
+            if(response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                switch(response.code()) {
+                    case 400 -> throw new BadRequestException(400, "Bad Request");
+                    case 422 -> throw new BadRequestException(422, "This time is already booked");
+                    default -> throw new InternalServerErrorException();
+                }
+            }
+        } catch (IOException ignore) {
+            throw new InternalServerErrorException();
         }
     }
 

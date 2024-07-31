@@ -7,12 +7,13 @@ import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -23,15 +24,22 @@ public class TestManchesterClient {
 
     @Autowired
     ManchesterClient manchesterClient;
-    @Mock
-    HttpCall httpCall;
+    @Autowired
+    ManchesterProperties manchesterProperties;
 
     ManchesterResponse manchesterResponse;
 
+    void dockerTestEnv() {
+        if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
+            manchesterProperties.getApi().setEndpoint("http://172.17.0.1:9004");
+        }
+    }
+
     @Test
     void test_ManchesterRequestAvailableTime() {
+        dockerTestEnv();
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(ManchesterRequest.builder()
-//                .from("2006-01-02")
+                .from(LocalDate.now())
                 .build());
 
         assertAll(
@@ -67,8 +75,9 @@ public class TestManchesterClient {
 
     @Test
     void test_ManchesterBookingError() {
+        dockerTestEnv();
         String dummyId = "20";
-        dummyCallManchester(dummyId);
+        dummyBookManchester(dummyId);
         assertAll(
                 () -> assertThrows(BadRequestException.class,
                         () -> manchesterClient.bookTime(ManchesterRequest.builder()
@@ -84,7 +93,7 @@ public class TestManchesterClient {
                 ));
     }
 
-    private void dummyCallManchester(String id) {
+    private void dummyBookManchester(String id) {
         try {
             manchesterClient.bookTime(ManchesterRequest.builder()
                     .id(id)

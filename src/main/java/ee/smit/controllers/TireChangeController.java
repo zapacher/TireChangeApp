@@ -2,9 +2,9 @@ package ee.smit.controllers;
 
 import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.RequestType;
-import ee.smit.commons.enums.VehicleTypes;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.LocationProperties;
+import ee.smit.controller.api.AvailableLocationsResponse;
 import ee.smit.controller.api.AvailableTime;
 import ee.smit.controller.api.Booking;
 import ee.smit.controller.api.groups.Request;
@@ -15,9 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.List;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
@@ -39,10 +36,10 @@ public class TireChangeController {
     LocationProperties locationProperties;
 
     @GetMapping("/availableLocations")
-    public HashMap<Locations, List<VehicleTypes>> getLocations() {
+    public AvailableLocationsResponse getLocations() {
         log.info("getLocations Request");
 
-        HashMap<Locations, List<VehicleTypes>> response = locationProperties.getAvailableLocations();
+        AvailableLocationsResponse response = new AvailableLocationsResponse(locationProperties.getAvailableLocations());
 
         log.info("getLocations Response: -> {}", response);
         return response;

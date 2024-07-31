@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AvailableLocationsResponse {
-    HashMap<Locations, List<VehicleTypes>> availableLocationsResponse = new HashMap<>();
+    HashMap<Locations, List<VehicleTypes>> availableLocations = new HashMap<>();
 }
