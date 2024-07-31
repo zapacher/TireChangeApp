@@ -1,4 +1,4 @@
-package ee.smit.controllers.api;
+package ee.smit.controller.api;
 
 import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.VehicleTypes;
