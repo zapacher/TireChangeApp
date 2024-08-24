@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         let response;
-        fetch('http://172.33.0.1:9006/tire_change/getAvailableTime', {
+        fetch('http://172.33.0.1:9006/tire_change/availableTime', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

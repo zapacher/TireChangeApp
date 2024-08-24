@@ -1,4 +1,4 @@
-package ee.smit.controllers;
+package ee.smit.controller;
 
 import ee.smit.commons.enums.Locations;
 import ee.smit.commons.enums.RequestType;
@@ -36,7 +36,7 @@ public class TireChangeController {
     LocationProperties locationProperties;
 
     @GetMapping("/availableLocations")
-    public AvailableLocationsResponse getLocations() {
+    public AvailableLocationsResponse availableLocations() {
         log.info("getLocations Request");
 
         AvailableLocationsResponse response = new AvailableLocationsResponse(locationProperties.getAvailableLocations());
@@ -45,8 +45,8 @@ public class TireChangeController {
         return response;
     }
 
-    @PostMapping("/getAvailableTime")
-    public AvailableTime getAvailableTime(@Validated (Request.class) @RequestBody AvailableTime request) {
+    @PostMapping("/availableTime")
+    public AvailableTime availableTime(@Validated (Request.class) @RequestBody AvailableTime request) {
         log.info("getAvailableTime Request: -> {}", request);
 
         AvailableTime response = controller(request, request.getLocation(), AVAILABLE_TIME);

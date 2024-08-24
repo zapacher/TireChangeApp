@@ -11,7 +11,6 @@ import ee.smit.configurations.LondonProperties;
 import ee.smit.configurations.ManchesterProperties;
 import ee.smit.controller.api.AvailableLocationsResponse;
 import ee.smit.controller.api.AvailableTime;
-import ee.smit.controllers.TireChangeController;
 import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
 import okhttp3.OkHttpClient;
@@ -57,14 +56,14 @@ public class TestTireChangeController {
         getLocations();
 
         for (Map.Entry<Locations, List<VehicleTypes>> entry : locationsResponse.getAvailableLocations().entrySet()) {
-            assertNotNull(controller.getAvailableTime(buildAvailableTimeRequest(ZonedDateTime.now(ZoneOffset.UTC).toString(), entry.getKey())),
+            assertNotNull(controller.availableTime(buildAvailableTimeRequest(ZonedDateTime.now(ZoneOffset.UTC).toString(), entry.getKey())),
                     entry.getKey().name() + " response was null");
         }
     }
 
     void getLocations() {
         dockerTestEnv();
-        locationsResponse = controller.getLocations();
+        locationsResponse = controller.availableLocations();
     }
 
     void dockerTestEnv() {
