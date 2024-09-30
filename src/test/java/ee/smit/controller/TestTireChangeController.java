@@ -37,13 +37,8 @@ public class TestTireChangeController {
 
     @Autowired
     TireChangeController controller;
-    @Autowired
-    LondonProperties londonProperties;
-    @Autowired
-    ManchesterProperties manchesterProperties;
 
     AvailableLocationsResponse locationsResponse;
-
 
     @Test
     void test_getAvaialableLoations() {
@@ -62,15 +57,7 @@ public class TestTireChangeController {
     }
 
     void getLocations() {
-        dockerTestEnv();
         locationsResponse = controller.availableLocations();
-    }
-
-    void dockerTestEnv() {
-        if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
-            manchesterProperties.getApi().setEndpoint("http://172.17.0.1:9004");
-            londonProperties.getApi().setEndpoint("http://172.17.0.1:9003");
-        }
     }
 
     AvailableTime buildAvailableTimeRequest(String userTime, Locations location) {

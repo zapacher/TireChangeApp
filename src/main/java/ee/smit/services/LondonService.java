@@ -27,8 +27,6 @@ public class LondonService {
     @Autowired
     LondonClient londonClient;
 
-    final static int MONTHS_RANGE = 6;
-
     public <T> T process(T request, RequestType requestType) {
         isLocationAvailable();
 
@@ -49,7 +47,7 @@ public class LondonService {
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
                         .from(userCurrentDate)
-                        .until(userCurrentDate.plusMonths(MONTHS_RANGE))
+                        .until(userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()))
                         .build()
         );
 

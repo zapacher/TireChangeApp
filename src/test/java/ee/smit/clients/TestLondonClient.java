@@ -6,8 +6,10 @@ import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.LondonProperties;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,24 +20,24 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @EnableConfigurationProperties(LondonProperties.class)
 @SpringBootTest(classes = LondonClient.class)
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
+@TestInstance(PER_CLASS)
 public class TestLondonClient {
 
     @Autowired
     LondonClient londonClient;
     @Autowired
-    static LondonProperties londonProperties;
+    LondonProperties londonProperties;
 
     LondonResponse londonResponse;
 
     @BeforeAll
-    static void beforeALl() {
-        if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
-            londonProperties.getApi().setEndpoint("http://172.17.0.1:9003");
-        }
+    void beforeALl() {
+        Assumptions.assumeFalse(londonProperties.getApi().getEndpoint().isBlank(), "No endpoint provided for London");
     }
 
     @Test
@@ -43,12 +45,12 @@ public class TestLondonClient {
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
                         .from(LocalDate.now())
-                        .until(LocalDate.now().plusMonths(5))
+                        .until(LocalDate.now().plusMonths(londonProperties.getConfig().getMonthsRange()))
                         .build());
 
         assertAll(
                 () -> assertNotNull(londonResponse.getTireChangeTimesResponse(), "london available full response"),
-                () -> assertNotNull(londonResponse.getTireChangeTimesResponse().getAvailableTime(),"london available full response list")
+                () -> assertNotNull(londonResponse.getTireChangeTimesResponse().getAvailableTime(), "london available full response list")
         );
 
         this.londonResponse = londonResponse;
@@ -67,7 +69,7 @@ public class TestLondonClient {
                         .build());
 
         assertAll(
-                () -> assertNotNull(londonResponse.getTireChangeBookingResponse(),"london booking response"),
+                () -> assertNotNull(londonResponse.getTireChangeBookingResponse(), "london booking response"),
                 () -> assertNotNull(londonResponse.getTireChangeBookingResponse().getTime(), "london booking response time"),
                 () -> assertNotNull(londonResponse.getTireChangeBookingResponse().getUuid(), "london booking response uuid")
         );
@@ -103,6 +105,7 @@ public class TestLondonClient {
                             .uuid(id)
                             .bookingInfo(info)
                             .build());
-        } catch (BadRequestException ignore) {}
+        } catch (BadRequestException ignore) {
+        }
     }
 }

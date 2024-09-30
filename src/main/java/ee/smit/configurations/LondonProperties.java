@@ -17,10 +17,16 @@ public class LondonProperties {
     boolean available;
     Locations location;
     List<VehicleTypes> vehicleTypes;
+    Config config;
 
     @Data
     public static class Api {
         String endpoint;
         String tirechangepath;
+    }
+
+    @Data
+    public static class Config {
+        int monthsRange;
     }
 }

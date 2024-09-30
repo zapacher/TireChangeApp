@@ -18,3 +18,5 @@ london:
   api:
     endpoint: "http://localhost:9003"
     tirechangepath: "/api/v1/tire-change-times"
+  config:
+    monthsRange: 6

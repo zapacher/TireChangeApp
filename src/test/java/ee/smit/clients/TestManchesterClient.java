@@ -6,8 +6,10 @@ import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,24 +19,24 @@ import org.springframework.web.client.RestTemplate;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
 
 @EnableConfigurationProperties(ManchesterProperties.class)
 @SpringBootTest(classes = ManchesterClient.class)
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
+@TestInstance(PER_CLASS)
 public class TestManchesterClient {
 
     @Autowired
     ManchesterClient manchesterClient;
     @Autowired
-    static ManchesterProperties manchesterProperties;
+    ManchesterProperties manchesterProperties;
 
     ManchesterResponse manchesterResponse;
 
     @BeforeAll
-    static void beforeALl() {
-        if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
-            manchesterProperties.getApi().setEndpoint("http://172.17.0.1:9004");
-        }
+    void beforeALl() {
+        Assumptions.assumeFalse(manchesterProperties.getApi().getEndpoint().isBlank(), "No endpoint provided for Manchester");
     }
 
     @Test
