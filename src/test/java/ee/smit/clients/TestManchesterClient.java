@@ -6,6 +6,7 @@ import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.ManchesterProperties;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,11 +26,12 @@ public class TestManchesterClient {
     @Autowired
     ManchesterClient manchesterClient;
     @Autowired
-    ManchesterProperties manchesterProperties;
+    static ManchesterProperties manchesterProperties;
 
     ManchesterResponse manchesterResponse;
 
-    void dockerTestEnv() {
+    @BeforeAll
+    static void beforeALl() {
         if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
             manchesterProperties.getApi().setEndpoint("http://172.17.0.1:9004");
         }
@@ -37,7 +39,6 @@ public class TestManchesterClient {
 
     @Test
     void test_ManchesterRequestAvailableTime() {
-        dockerTestEnv();
         ManchesterResponse manchesterResponse = manchesterClient.getAvailableTime(ManchesterRequest.builder()
                 .from(LocalDate.now())
                 .build());
@@ -75,7 +76,6 @@ public class TestManchesterClient {
 
     @Test
     void test_ManchesterBookingError() {
-        dockerTestEnv();
         String dummyId = "20";
         dummyBookManchester(dummyId);
         assertAll(

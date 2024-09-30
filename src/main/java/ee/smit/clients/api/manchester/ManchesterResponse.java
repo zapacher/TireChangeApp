@@ -1,6 +1,7 @@
 package ee.smit.clients.api.manchester;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import ee.smit.clients.api.Response;
 import ee.smit.commons.errors.ErrorResponse;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @Builder
-public class ManchesterResponse {
+public class ManchesterResponse implements Response {
 
     private ErrorResponse errorResponse;
 

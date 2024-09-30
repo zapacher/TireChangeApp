@@ -6,6 +6,7 @@ import ee.smit.commons.HttpCall;
 import ee.smit.commons.errors.BadRequestException;
 import ee.smit.configurations.LondonProperties;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,11 +27,12 @@ public class TestLondonClient {
     @Autowired
     LondonClient londonClient;
     @Autowired
-    LondonProperties londonProperties;
+    static LondonProperties londonProperties;
 
     LondonResponse londonResponse;
 
-    void dockerTestEnv() {
+    @BeforeAll
+    static void beforeALl() {
         if(System.getenv("MAVEN_PROJECTBASEDIR")!=null) {
             londonProperties.getApi().setEndpoint("http://172.17.0.1:9003");
         }
@@ -38,7 +40,6 @@ public class TestLondonClient {
 
     @Test
     void test_LondonRequestAvailableTime() {
-        dockerTestEnv();
         LondonResponse londonResponse = londonClient.getAvailableTime(
                 LondonRequest.builder()
                         .from(LocalDate.now())
