@@ -9,8 +9,6 @@ import lombok.Data;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Data
@@ -18,14 +16,15 @@ import java.util.UUID;
 @XmlRootElement(name = "london")
 public class London {
 
+    @XmlElement(name = "tireChangeTimesResponse")
+    public TireChangeTimesResponse tireChangeTimesResponse;
+
     @XmlElement(name = "tireChangeBookingRequest")
     private TireChangeBookingRequest tireChangeBookingRequest;
 
     @XmlElement(name = "tireChangeBookingResponse")
     private TireChangeBookingResponse tireChangeBookingResponse;
 
-    @XmlElement(name = "tireChangeTimesResponse")
-    private TireChangeTimesResponse tireChangeTimesResponse;
 
     @XmlElement(name = "errorResponse")
     private ErrorResponse errorResponse;
@@ -53,20 +52,5 @@ public class London {
 
         @XmlElement(name = "time")
         String time;
-    }
-
-    @Data
-    public static class TireChangeTimesResponse implements Response {
-        @XmlElement(name = "availableTime")
-        List<AvailableTime> availableTime = new ArrayList<>();
-
-        @Data
-        public static class AvailableTime {
-            @XmlElement(name = "uuid")
-            UUID uuid;
-
-            @XmlElement(name = "time")
-            String time;
-        }
     }
 }

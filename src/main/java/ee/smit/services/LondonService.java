@@ -1,8 +1,7 @@
 package ee.smit.services;
 
 import ee.smit.clients.LondonClient;
-import ee.smit.clients.api.london.LondonRequest;
-import ee.smit.clients.api.london.LondonResponse;
+import ee.smit.clients.api.london.London;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
@@ -44,12 +43,7 @@ public class LondonService {
     private AvailableTime getAvailableTime(AvailableTime request) {
         final LocalDate userCurrentDate = Instant.parse(request.getUserTime()).atZone(ZoneId.of("UTC")).toLocalDate();
 
-        LondonResponse londonResponse = londonClient.getAvailableTime(
-                LondonRequest.builder()
-                        .from(userCurrentDate)
-                        .until(userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()))
-                        .build()
-        );
+        London londonResponse = londonClient.getAvailableTime(userCurrentDate, userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()));
 
         AvailableTime response = new AvailableTime();
         response.getVehicleTypes().addAll(londonProperties.getVehicleTypes());
@@ -75,13 +69,10 @@ public class LondonService {
          */
         checkAvailability(request);
 
-        LondonResponse londonResponse = londonClient.bookTime(LondonRequest.builder()
-                .uuid(UUID.fromString(request.getId()))
-                .bookingInfo(request.getInfo())
-                .build());
+        London response = londonClient.bookTime(UUID.fromString(request.getId()), request.getInfo());
 
         return Booking.builder()
-                .bookingTime(londonResponse.getTireChangeBookingResponse().getTime())
+                .bookingTime(response.getTireChangeBookingResponse().getTime())
                 .isBooked(true)
                 .build();
     }
