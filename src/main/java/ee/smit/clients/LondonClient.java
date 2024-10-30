@@ -1,5 +1,6 @@
 package ee.smit.clients;
 
+import ee.smit.clients.api.london.London;
 import ee.smit.clients.api.london.LondonRequest;
 import ee.smit.clients.api.london.LondonResponse;
 import ee.smit.clients.api.london.TireChangeBookingResponse;
@@ -34,11 +35,11 @@ public class LondonClient {
     @Autowired
     LondonProperties londonProperties;
 
-    public LondonResponse getAvailableTime(LondonRequest request) {
+    public London getAvailableTime(London request) {
         log.info("getAvailableTime Request: -> {}", request);
 
-        LondonResponse response = LondonResponse.builder()
-                .tireChangeTimesResponse(fromXml(TireChangeTimesResponse.class, AVAILABLE_TIME, request))
+        London response = London.builder()
+                .tireChangeTimesResponse(urlExecutor(AVAILABLE_TIME, request))
                 .build();
 
         log.info("getAvailableTime Response: -> {}", response);
@@ -56,7 +57,8 @@ public class LondonClient {
         return response;
     }
 
-    public <T> T fromXml(Class<T> responseClass, RequestType requestType, LondonRequest londonRequest) {
+    @Deprecated(forRemoval = true)
+    public <T> T fromXml(Class<T> responseClass, RequestType requestType, London londonRequest) {
 
         String urlResponse = urlExecutor(requestType, londonRequest);
 
@@ -72,15 +74,15 @@ public class LondonClient {
         }
     }
 
-    private String urlExecutor(RequestType requestType, LondonRequest londonRequest) {
+    private String urlExecutor(RequestType requestType, London londonRequest) {
         String URL = londonProperties.getApi().getEndpoint() + londonProperties.getApi().getTirechangepath();
         Response response = null;
         try {
             switch (requestType) {
-                case AVAILABLE_TIME -> response = httpCall.get(URL + "/available?from=" + londonRequest.getFrom()
-                        + "&until=" + londonRequest.getUntil());
-                case BOOKING -> response = httpCall.put(URL + "/" + londonRequest.getUuid()+"/booking",
-                        buildBookingBodyXML(londonRequest.getBookingInfo()));
+                case AVAILABLE_TIME -> response = httpCall.get(URL + "/available?from=" + londonRequest.getTireChangeBookingRequest().getFrom()
+                        + "&until=" + londonRequest.getTireChangeBookingRequest().getUntil());
+                case BOOKING -> response = httpCall.put(URL + "/" + londonRequest.getTireChangeBookingRequest().getUuid()+"/booking",
+                        buildBookingBodyXML(londonRequest.getTireChangeBookingRequest().getBookingInfo()));
             }
             if(response.isSuccessful()) {
                 return response.body().string();
