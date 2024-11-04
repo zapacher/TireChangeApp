@@ -3,12 +3,13 @@ package ee.smit.clients.api.london;
 import lombok.Data;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Data
-@XmlElement(name = "tireChangeTimesResponse")
+@XmlRootElement(name = "tireChangeTimesResponse")
 public class TireChangeTimesResponse {
     @XmlElement(name = "availableTime")
     List<AvailableTime> availableTime = new ArrayList<>();
