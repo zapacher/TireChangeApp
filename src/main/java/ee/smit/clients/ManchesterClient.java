@@ -54,12 +54,17 @@ public class ManchesterClient {
         final String URL = manchesterProperties.getApi().getEndpoint() + manchesterProperties.getApi().getTirechangepath();
         Response response = null;
         try {
-            switch (requestType) {
-                case AVAILABLE_TIME -> response = httpCall.get(URL + "?from=" + manchesterRequest.getFrom());
-                case BOOKING -> response = httpCall.post(URL + "/" + manchesterRequest.getId() + "/booking",
-                        "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
-            }
+//            switch (requestType) {
+//                case AVAILABLE_TIME -> response = httpCall.get(URL + "?from=" + manchesterRequest.getFrom());
+//                case BOOKING -> response = httpCall.post(URL + "/" + manchesterRequest.getId() + "/booking",
+//                        "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
+//            }
 
+            switch (requestType) {
+                case AVAILABLE_TIME -> response = httpCall.get(URL + manchesterRequest.getFromUrlPath());
+                case BOOKING -> response = httpCall.post(URL + manchesterRequest.getBookingUrlPath(),
+                        manchesterRequest.getContactInformationOnlyBody());
+            }
             if(response == null) {
                 throw new BadRequestException(500, "Service is currently unreachable");
             }
