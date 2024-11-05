@@ -21,4 +21,9 @@ WARNING
 if run without docker, correct endpoints in 'src/resources/application.yml' and 'frontend/script.js'
 
 Notes:
-    At the moment - tests are ignored;
+    At the moment - tests are ignored and not actual;
+    JavaScript - isn't my language, so this was first experience ~10h
+
+Warning!!!
+    local firewall can block container ports, that may cause no connection between this project and the server containers
+    Note: check reachable by curl/wget/postman

@@ -6,17 +6,18 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 @Slf4j
 @Component
 public class HttpCall {
 
     @Autowired
-    OkHttpClient client;
+    @Qualifier("OkHttpClientConfig")
+    private OkHttpClient client;
 
     public Response post(String requestUrl, String requestBody) {
         return execute(new Request.Builder()
@@ -49,6 +50,6 @@ public class HttpCall {
     }
 
     private RequestBody createRequestBody(String requestBody) {
-        return okhttp3.RequestBody.create(requestBody,okhttp3.MediaType.parse(APPLICATION_JSON_VALUE));
+        return okhttp3.RequestBody.create(requestBody,okhttp3.MediaType.parse(org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE));
     }
 }

@@ -1,7 +1,5 @@
 package ee.smit.clients;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
@@ -15,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+import static ee.smit.commons.JsonParser.fromJsonList;
+import static ee.smit.commons.JsonParser.fromJson;
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
 
@@ -44,7 +44,7 @@ public class ManchesterClient {
     public ManchesterResponse bookTime(ManchesterRequest request) {
         log.info("bookTime Request: -> {}", request);
 
-        ManchesterResponse response = toJson(urlExecutor(BOOKING, request));
+        ManchesterResponse response = fromJson(urlExecutor(BOOKING, request), ManchesterResponse.class);
 
         log.info("bookTime Response: -> {}", response);
         return response;
@@ -55,16 +55,15 @@ public class ManchesterClient {
         Response response = null;
         try {
             switch (requestType) {
-                case AVAILABLE_TIME -> response = httpCall.get(URL + "?from=" + manchesterRequest.getFrom());
-                case BOOKING -> response = httpCall.post(URL + "/" + manchesterRequest.getId() + "/booking",
-                        "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
+                case AVAILABLE_TIME -> response = httpCall.get(URL + manchesterRequest.getFromUrlPath());
+                case BOOKING -> response = httpCall.post(URL + manchesterRequest.getBookingUrlPath(),
+                        manchesterRequest.getContactInformationOnlyBody());
             }
-
             if(response == null) {
                 throw new BadRequestException(500, "Service is currently unreachable");
             }
 
-            if (response.isSuccessful()) {
+            if (Objects.requireNonNull(response).isSuccessful()) {
                 return response.body().string();
             } else {
                 switch (response.code()) {
@@ -78,13 +77,10 @@ public class ManchesterClient {
         }
     }
 
-    private ManchesterResponse toJsonList(String jsonString) {
-        Type availableTimeListType = new TypeToken<List<ManchesterResponse.AvailableTime>>(){}.getType();
-        List<ManchesterResponse.AvailableTime> timeList = gson.fromJson(jsonString, availableTimeListType);
-
+    private ManchesterResponse toJsonList(String jsonStringList) {
         List<ManchesterResponse.AvailableTime> availableTimes = new ArrayList<>();
 
-        for(ManchesterResponse.AvailableTime availableTime : timeList) {
+        for(ManchesterResponse.AvailableTime availableTime : fromJsonList(jsonStringList, ManchesterResponse.AvailableTime.class)) {
             if(availableTime.isAvailable()) {
                 availableTimes.add(availableTime);
             }
@@ -94,10 +90,4 @@ public class ManchesterClient {
                 .availableTimes(availableTimes)
                 .build();
     }
-
-    private ManchesterResponse toJson(String jsonString) {
-        return gson.fromJson(jsonString, ManchesterResponse.class);
-    }
-
-    Gson gson = new Gson();
 }

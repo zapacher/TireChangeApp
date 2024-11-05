@@ -16,4 +16,18 @@ public class ManchesterRequest implements Request {
     LocalDate from;
     String id;
     String contactInformation;
+
+    public String getFromUrlPath() {
+        String fromPath = "?from=";
+        return fromPath+from;
+    }
+
+    public String getBookingUrlPath() {
+        String bookingPath = "/booking";
+        return "/" + this.id + bookingPath;
+    }
+
+    public String getContactInformationOnlyBody() {
+        return "{\"contactInformation\" : \"" + contactInformation + "\"}";
+    }
 }

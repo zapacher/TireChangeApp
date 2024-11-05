@@ -1,8 +1,7 @@
 package ee.smit.services;
 
 import ee.smit.clients.LondonClient;
-import ee.smit.clients.api.london.LondonRequest;
-import ee.smit.clients.api.london.LondonResponse;
+import ee.smit.clients.api.london.LondonDTO;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
@@ -44,10 +43,12 @@ public class LondonService {
     private AvailableTime getAvailableTime(AvailableTime request) {
         final LocalDate userCurrentDate = Instant.parse(request.getUserTime()).atZone(ZoneId.of("UTC")).toLocalDate();
 
-        LondonResponse londonResponse = londonClient.getAvailableTime(
-                LondonRequest.builder()
-                        .from(userCurrentDate)
-                        .until(userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()))
+        LondonDTO londonResponse = londonClient.getAvailableTime(
+                LondonDTO.builder()
+                        .tireChangeBookingRequest(LondonDTO.TireChangeBookingRequest.builder()
+                                .from(userCurrentDate)
+                                .until(userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()))
+                                .build())
                         .build()
         );
 
@@ -75,13 +76,17 @@ public class LondonService {
          */
         checkAvailability(request);
 
-        LondonResponse londonResponse = londonClient.bookTime(LondonRequest.builder()
-                .uuid(UUID.fromString(request.getId()))
-                .bookingInfo(request.getInfo())
-                .build());
+        LondonDTO response = londonClient.bookTime(
+                LondonDTO.builder()
+                        .tireChangeBookingRequest(LondonDTO.TireChangeBookingRequest.builder()
+                                .uuid(UUID.fromString(request.getId()))
+                                .bookingInfo(request.getInfo())
+                                .build())
+                        .build()
+        );
 
         return Booking.builder()
-                .bookingTime(londonResponse.getTireChangeBookingResponse().getTime())
+                .bookingTime(response.getTireChangeBookingResponse().getTime())
                 .isBooked(true)
                 .build();
     }

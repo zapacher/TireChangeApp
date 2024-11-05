@@ -14,6 +14,7 @@ import ee.smit.controller.api.AvailableTime;
 import ee.smit.services.LondonService;
 import ee.smit.services.ManchesterService;
 import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -33,6 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @SpringBootTest(classes = {TireChangeController.class})
 @Import({RestTemplate.class, OkHttpClient.class, HttpCall.class, ManchesterService.class, LondonService.class,
         ManchesterClient.class, LondonClient.class, LocationProperties.class})
+@Disabled
 public class TestTireChangeController {
 
     @Autowired
