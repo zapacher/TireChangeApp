@@ -3,7 +3,7 @@ spring:
     allow-bean-definition-overriding: true
 
 manchester:
-  available: false
+  available: true
   vehicleTypes:
     - CAR
     - TRUCK
