@@ -20,7 +20,7 @@ WARNING
 if run without docker, correct endpoints in 'src/resources/application.yml' and 'frontend/script.js'
 
 Notes:
-    At the moment - tests are ignored and not actual;
+    At the moment - tests are ignored and not actual. 
     JavaScript - isn't my language, so this was first experience ~10h
 
 Warning!!!
