@@ -13,13 +13,10 @@ import okhttp3.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.Objects;
 
+import static ee.smit.commons.XmParser.fromXml;
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
 
@@ -59,21 +56,6 @@ public class LondonClient {
                 .build();
         log.info("bookTime Response: -> {}", response);
         return response;
-    }
-
-    public <T> T fromXml(String londonUrlResponse, Class<T> classType) {
-
-        if(Objects.requireNonNull(londonUrlResponse).isEmpty()) {
-            throw new InternalServerErrorException(500, "blank london response");
-        }
-
-        try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(classType);
-            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (T) unmarshaller.unmarshal(new StringReader(londonUrlResponse));
-        } catch (JAXBException ex) {
-            throw new InternalServerErrorException(500, ex.getMessage());
-        }
     }
 
     private String urlExecutorAvailableTime(String urlRequest) {

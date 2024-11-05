@@ -1,7 +1,5 @@
 package ee.smit.clients;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import ee.smit.clients.api.manchester.ManchesterRequest;
 import ee.smit.clients.api.manchester.ManchesterResponse;
 import ee.smit.commons.HttpCall;
@@ -15,11 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static ee.smit.commons.JsonParser.fromJsonList;
+import static ee.smit.commons.JsonParser.fromJson;
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
 
@@ -45,7 +44,7 @@ public class ManchesterClient {
     public ManchesterResponse bookTime(ManchesterRequest request) {
         log.info("bookTime Request: -> {}", request);
 
-        ManchesterResponse response = toJson(urlExecutor(BOOKING, request));
+        ManchesterResponse response = fromJson(urlExecutor(BOOKING, request), ManchesterResponse.class);
 
         log.info("bookTime Response: -> {}", response);
         return response;
@@ -79,12 +78,9 @@ public class ManchesterClient {
     }
 
     private ManchesterResponse toJsonList(String jsonString) {
-        Type availableTimeListType = new TypeToken<List<ManchesterResponse.AvailableTime>>(){}.getType();
-        List<ManchesterResponse.AvailableTime> timeList = gson.fromJson(jsonString, availableTimeListType);
-
         List<ManchesterResponse.AvailableTime> availableTimes = new ArrayList<>();
 
-        for(ManchesterResponse.AvailableTime availableTime : timeList) {
+        for(ManchesterResponse.AvailableTime availableTime : fromJsonList(jsonString, ManchesterResponse.AvailableTime.class)) {
             if(availableTime.isAvailable()) {
                 availableTimes.add(availableTime);
             }
@@ -94,10 +90,4 @@ public class ManchesterClient {
                 .availableTimes(availableTimes)
                 .build();
     }
-
-    private ManchesterResponse toJson(String jsonString) {
-        return gson.fromJson(jsonString, ManchesterResponse.class);
-    }
-
-    Gson gson = new Gson();
 }
