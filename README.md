@@ -24,5 +24,6 @@ Notes:
     At the moment - tests are ignored and not actual;
     JavaScript - isn't my language, so this was first experience ~10h
 
-Warning!!
-    local firewall can block container ports, please check that first if  
+Warning!!!
+    local firewall can block container ports, that may cause no connection between this project and the server containers
+    Note: check reachable by curl/wget/postman
