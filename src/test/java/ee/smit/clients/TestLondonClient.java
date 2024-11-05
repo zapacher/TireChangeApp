@@ -1,32 +1,23 @@
-//package ee.smit.clients;
-//
-//import ee.smit.clients.api.london.LondonRequest;
-//import ee.smit.clients.api.london.LondonResponse;
-//import ee.smit.commons.HttpCall;
-//import ee.smit.commons.errors.BadRequestException;
-//import ee.smit.configurations.LondonProperties;
-//import okhttp3.OkHttpClient;
-//import org.junit.jupiter.api.Assumptions;
-//import org.junit.jupiter.api.BeforeAll;
-//import org.junit.jupiter.api.Test;
-//import org.junit.jupiter.api.TestInstance;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.context.properties.EnableConfigurationProperties;
-//import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.context.annotation.Import;
-//import org.springframework.web.client.RestTemplate;
-//
-//import java.time.LocalDate;
-//import java.util.UUID;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
-//
-//@EnableConfigurationProperties(LondonProperties.class)
-//@SpringBootTest(classes = LondonClient.class)
-//@Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
-//@TestInstance(PER_CLASS)
-//public class TestLondonClient {
+package ee.smit.clients;
+
+import ee.smit.commons.HttpCall;
+import ee.smit.configurations.LondonProperties;
+import okhttp3.OkHttpClient;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.TestInstance;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.web.client.RestTemplate;
+
+import static org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS;
+
+@EnableConfigurationProperties(LondonProperties.class)
+@SpringBootTest(classes = LondonClient.class)
+@Import({RestTemplate.class, OkHttpClient.class, HttpCall.class})
+@TestInstance(PER_CLASS)
+@Disabled
+public class TestLondonClient {
 //
 //    @Autowired
 //    LondonClient londonClient;
@@ -108,4 +99,4 @@
 //        } catch (BadRequestException ignore) {
 //        }
 //    }
-//}
+}
