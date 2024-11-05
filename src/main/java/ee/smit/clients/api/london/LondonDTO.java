@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /*
     Documentation for London has error in XML Models
-     <london> - isn't necessary element
+     <london> - isn't necessary element in responses
  */
 @Data
 @Builder
