@@ -5,7 +5,6 @@ https://github.com/Surmus/tire-change-workshop
 If run localy:
 Before run by docker, check servers ip gateways and opened ports 
 that they are euqal to those that are in endpoints in file docker-compose.yaml - change if necessary. 
-If changes are made, then make changes in test files, or edit Dockefile -> RUN mvn clean package -DskipTests 
 
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.Gateway}}{{end}}' container-id-here
 
