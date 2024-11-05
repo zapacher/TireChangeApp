@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class OkHttpConfig {
+public class OkHttpClientConfig {
 
     @Bean(name = "OkHttpClientConfig")
     public OkHttpClient customOkHttpClient() {
