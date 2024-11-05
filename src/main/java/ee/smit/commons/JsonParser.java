@@ -14,7 +14,7 @@ public class JsonParser {
         return gson.fromJson(jsonString, clazz);
     }
 
-    public static <T> List<T> fromJsonList(String jsonString, Class<T> clazz) {
-        return gson.fromJson(jsonString, TypeToken.getParameterized(List.class, clazz).getType());
+    public static <T> List<T> fromJsonList(String jsonStringList, Class<T> clazz) {
+        return gson.fromJson(jsonStringList, TypeToken.getParameterized(List.class, clazz).getType());
     }
 }

@@ -77,10 +77,10 @@ public class ManchesterClient {
         }
     }
 
-    private ManchesterResponse toJsonList(String jsonString) {
+    private ManchesterResponse toJsonList(String jsonStringList) {
         List<ManchesterResponse.AvailableTime> availableTimes = new ArrayList<>();
 
-        for(ManchesterResponse.AvailableTime availableTime : fromJsonList(jsonString, ManchesterResponse.AvailableTime.class)) {
+        for(ManchesterResponse.AvailableTime availableTime : fromJsonList(jsonStringList, ManchesterResponse.AvailableTime.class)) {
             if(availableTime.isAvailable()) {
                 availableTimes.add(availableTime);
             }
