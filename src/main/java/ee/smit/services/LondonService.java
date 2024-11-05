@@ -1,7 +1,7 @@
 package ee.smit.services;
 
 import ee.smit.clients.LondonClient;
-import ee.smit.clients.api.london.London;
+import ee.smit.clients.api.london.LondonDTO;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.enums.RequestType;
 import ee.smit.commons.errors.BadRequestException;
@@ -43,7 +43,14 @@ public class LondonService {
     private AvailableTime getAvailableTime(AvailableTime request) {
         final LocalDate userCurrentDate = Instant.parse(request.getUserTime()).atZone(ZoneId.of("UTC")).toLocalDate();
 
-        London londonResponse = londonClient.getAvailableTime(userCurrentDate, userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()));
+        LondonDTO londonResponse = londonClient.getAvailableTime(
+                LondonDTO.builder()
+                        .tireChangeBookingRequest(LondonDTO.TireChangeBookingRequest.builder()
+                                .from(userCurrentDate)
+                                .until(userCurrentDate.plusMonths(londonProperties.getConfig().getMonthsRange()))
+                                .build())
+                        .build()
+        );
 
         AvailableTime response = new AvailableTime();
         response.getVehicleTypes().addAll(londonProperties.getVehicleTypes());
@@ -69,7 +76,14 @@ public class LondonService {
          */
         checkAvailability(request);
 
-        London response = londonClient.bookTime(UUID.fromString(request.getId()), request.getInfo());
+        LondonDTO response = londonClient.bookTime(
+                LondonDTO.builder()
+                        .tireChangeBookingRequest(LondonDTO.TireChangeBookingRequest.builder()
+                                .uuid(UUID.fromString(request.getId()))
+                                .bookingInfo(request.getInfo())
+                                .build())
+                        .build()
+        );
 
         return Booking.builder()
                 .bookingTime(response.getTireChangeBookingResponse().getTime())

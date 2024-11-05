@@ -8,9 +8,13 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.UUID;
 
+/*
+    Documentation for London has error in XML Models
+     <london> - isn't necessary element
+ */
 @Data
 @Builder
-public class London {
+public class LondonDTO {
     public TireChangeTimesResponse tireChangeTimesResponse;
     private TireChangeBookingRequest tireChangeBookingRequest;
     private TireChangeBookingResponse tireChangeBookingResponse;
@@ -23,5 +27,19 @@ public class London {
         private LocalDate until;
         private String bookingInfo;
         private UUID uuid;
+
+        public String getAvailableTimeRequestUrlPath() {
+            return "/available?from=" + from + "&until=" + until;
+        }
+
+        public String getBookingRequestUrlPath() {
+            return "/" + uuid + "/booking";
+        }
+
+        public String getBookingRequestBody() {
+            return "<london.tireChangeBookingRequest>\n" +
+                    "\t<contactInformation>"+bookingInfo+"</contactInformation>\n" +
+                    "</london.tireChangeBookingRequest>'";
+        }
     }
 }

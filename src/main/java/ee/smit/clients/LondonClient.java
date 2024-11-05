@@ -1,6 +1,6 @@
 package ee.smit.clients;
 
-import ee.smit.clients.api.london.London;
+import ee.smit.clients.api.london.LondonDTO;
 import ee.smit.clients.api.london.TireChangeBookingResponse;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.HttpCall;
@@ -18,9 +18,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.LocalDate;
 import java.util.Objects;
-import java.util.UUID;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
@@ -35,28 +33,29 @@ public class LondonClient {
     @Autowired
     LondonProperties londonProperties;
 
-    public London getAvailableTime(LocalDate from, LocalDate until) {
-        log.info("getAvailableTime Request from: -> {} ; until: -> {}", from, until);
+    public LondonDTO getAvailableTime(LondonDTO londonDTO) {
+        log.info("getAvailableTime Request ()-> {}", londonDTO.getTireChangeBookingRequest());
 
-        London response = London.builder()
+        LondonDTO response = LondonDTO.builder()
                 .tireChangeTimesResponse(
                         fromXml(
-                                urlExecutorAvailableTime("/available?from=" + from + "&until=" + until), TireChangeTimesResponse.class))
+                                urlExecutorAvailableTime(londonDTO.getTireChangeBookingRequest().getAvailableTimeRequestUrlPath()),
+                                TireChangeTimesResponse.class))
                 .build();
 
         log.info("getAvailableTime Response: -> {}", response);
         return response;
     }
 
-    public London bookTime(UUID uuid, String bookingInfo) {
-        log.info("bookTime Request uuid: -> {} ; bookingInfo: -> {}", uuid, bookingInfo);
+    public LondonDTO bookTime(LondonDTO londonDTO) {
+        log.info("bookTime Request: -> {}", londonDTO);
 
-        String executionUrlCore = "/" + uuid+"/booking";
-
-        London response = London.builder()
+        LondonDTO.TireChangeBookingRequest request = londonDTO.getTireChangeBookingRequest();
+        LondonDTO response = LondonDTO.builder()
                 .tireChangeBookingResponse(
                         fromXml(
-                                urlExecutor(BOOKING, executionUrlCore, buildBookingBodyXML(bookingInfo)), TireChangeBookingResponse.class))
+                                urlExecutor(BOOKING, request.getBookingRequestUrlPath(), request.getBookingRequestBody()),
+                                TireChangeBookingResponse.class))
                 .build();
         log.info("bookTime Response: -> {}", response);
         return response;
@@ -102,11 +101,5 @@ public class LondonClient {
         } catch (IOException ignore) {
             throw new InternalServerErrorException();
         }
-    }
-
-    private String buildBookingBodyXML(String bookingInfo) {
-        return "<london.tireChangeBookingRequest>\n" +
-                "\t<contactInformation>"+bookingInfo+"</contactInformation>\n" +
-                "</london.tireChangeBookingRequest>'";
     }
 }
