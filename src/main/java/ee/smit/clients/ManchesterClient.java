@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static ee.smit.commons.enums.RequestType.AVAILABLE_TIME;
 import static ee.smit.commons.enums.RequestType.BOOKING;
@@ -54,12 +55,6 @@ public class ManchesterClient {
         final String URL = manchesterProperties.getApi().getEndpoint() + manchesterProperties.getApi().getTirechangepath();
         Response response = null;
         try {
-//            switch (requestType) {
-//                case AVAILABLE_TIME -> response = httpCall.get(URL + "?from=" + manchesterRequest.getFrom());
-//                case BOOKING -> response = httpCall.post(URL + "/" + manchesterRequest.getId() + "/booking",
-//                        "{\"contactInformation\" : \"" + manchesterRequest.getContactInformation() + "\"}");
-//            }
-
             switch (requestType) {
                 case AVAILABLE_TIME -> response = httpCall.get(URL + manchesterRequest.getFromUrlPath());
                 case BOOKING -> response = httpCall.post(URL + manchesterRequest.getBookingUrlPath(),
@@ -69,7 +64,7 @@ public class ManchesterClient {
                 throw new BadRequestException(500, "Service is currently unreachable");
             }
 
-            if (response.isSuccessful()) {
+            if (Objects.requireNonNull(response).isSuccessful()) {
                 return response.body().string();
             } else {
                 switch (response.code()) {

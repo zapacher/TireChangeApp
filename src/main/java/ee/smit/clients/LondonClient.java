@@ -1,6 +1,7 @@
 package ee.smit.clients;
 
 import ee.smit.clients.api.london.London;
+import ee.smit.clients.api.london.TireChangeBookingResponse;
 import ee.smit.clients.api.london.TireChangeTimesResponse;
 import ee.smit.commons.HttpCall;
 import ee.smit.commons.enums.RequestType;
@@ -37,7 +38,11 @@ public class LondonClient {
     public London getAvailableTime(LocalDate from, LocalDate until) {
         log.info("getAvailableTime Request from: -> {} ; until: -> {}", from, until);
 
-        London response = fromXml(urlExecutor(AVAILABLE_TIME, "/available?from=" + from + "&until=" + until), TireChangeTimesResponse.class);
+        London response = London.builder()
+                .tireChangeTimesResponse(
+                        fromXml(
+                                urlExecutorAvailableTime("/available?from=" + from + "&until=" + until), TireChangeTimesResponse.class))
+                .build();
 
         log.info("getAvailableTime Response: -> {}", response);
         return response;
@@ -48,30 +53,33 @@ public class LondonClient {
 
         String executionUrlCore = "/" + uuid+"/booking";
 
-        London response = fromXml(urlExecutor(BOOKING, executionUrlCore, buildBookingBodyXML(bookingInfo)), London.class);
-
+        London response = London.builder()
+                .tireChangeBookingResponse(
+                        fromXml(
+                                urlExecutor(BOOKING, executionUrlCore, buildBookingBodyXML(bookingInfo)), TireChangeBookingResponse.class))
+                .build();
         log.info("bookTime Response: -> {}", response);
         return response;
     }
 
-    public London fromXml(String londonUrlResponse, Class classType) {
+    public <T> T fromXml(String londonUrlResponse, Class<T> classType) {
 
         if(Objects.requireNonNull(londonUrlResponse).isEmpty()) {
             throw new InternalServerErrorException(500, "blank london response");
         }
-        log.warn(londonUrlResponse);
+
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(classType);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-            return (London) unmarshaller.unmarshal(new StringReader(londonUrlResponse));
+            return (T) unmarshaller.unmarshal(new StringReader(londonUrlResponse));
         } catch (JAXBException ex) {
             throw new InternalServerErrorException(500, ex.getMessage());
         }
     }
-    private String urlExecutor(RequestType requestType, String urlRequest) {
-        return urlExecutor(requestType, urlRequest, null);
-    }
 
+    private String urlExecutorAvailableTime(String urlRequest) {
+        return urlExecutor(AVAILABLE_TIME, urlRequest, null);
+    }
 
     private String urlExecutor(RequestType requestType, String urlRequest, String requestBody) {
         String URL = londonProperties.getApi().getEndpoint() + londonProperties.getApi().getTirechangepath();
@@ -81,7 +89,8 @@ public class LondonClient {
                 case AVAILABLE_TIME -> response = httpCall.get(URL + urlRequest);
                 case BOOKING -> response = httpCall.put(URL + urlRequest, requestBody);
             }
-            if(response.isSuccessful()) {
+
+            if(Objects.requireNonNull(response).isSuccessful()) {
                 return response.body().string();
             } else {
                 switch(response.code()) {
